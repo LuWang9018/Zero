@@ -1,0 +1,35 @@
+Reference:
+	Tut:
+		https://stanko.github.io/webpack-babel-react-revisited/
+
+Install all of these:
+	npm install
+	npm install -g create-react-app
+	npm install --save-dev webpack
+	npm install --save-dev webpack-dev-server
+	npm install --save-dev html-webpack-plugin
+	npm install --save-dev babel-core babel-loader babel-preset-env babel-preset-react
+	npm install --save react react-dom
+	npm install --save-dev css-loader extract-text-webpack-plugin
+	npm install --save-dev file-loader
+	npm install moment --save
+	npm install immutability-helper --save
+	npm install --save socket.io-client
+	npm install react-draggable-tabs --save
+	npm install react-awesome-modal
+	npm install react-input-enhancements
+	npm install react-bootstrap
+	npm install --save redux
+	npm install --save-dev babel-plugin-transform-es2015-destructuring
+	npm install --save-dev babel-plugin-transform-object-rest-spread
+	npm i gamesparks-sdk
+	npm i crypto-js
+	npm i bufferutil
+	npm i utf-8-validate
+	npm i fs
+	npm install request
+	npm i websocket
+	npm install -g react-prototype
+	npm install --save prop-types
+Run server:
+	npm run dev
