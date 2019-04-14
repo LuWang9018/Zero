@@ -5,12 +5,14 @@
   "main": "src/index.mjs",
   "scripts": {
     "test": "test",
+    "dev": "nodemon --experimental-modules src/index.mjs",
     "server": "node --experimental-modules src/index.mjs"
   },
   "author": "Lu",
   "license": "ISC",
   "dependencies": {
     "koa": "^2.7.0",
+    "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "kow": "^3.2.3",
     "pwd": "^1.1.0"
