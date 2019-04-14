@@ -1,13 +1,31 @@
 import Koa from 'koa';
 import Router from 'koa-router';
 import logger from 'koa-logger';
+import koaBody from 'koa-body';
 import users from './api/users';
+import pass from 'pwd';
+import { connectDB } from './db/db';
 
 const app = new Koa();
 const router = new Router();
 
+connectDB();
+
 app.use(logger());
+
+app.use(
+  koaBody({
+    multipart: true,
+    formLimit: '500mb',
+    jsonLimit: '500mb',
+    formidable: {
+      maxFileSize: 500 * 1024 * 1024
+    }
+  })
+);
+
 users.api(router);
+
 app.use(async (ctx, next) => {
   try {
     await next();
@@ -17,10 +35,6 @@ app.use(async (ctx, next) => {
   }
 });
 app.use(router.routes());
-app.use(router.allowedMethods());
-app.use(ctx => {
-  ctx.status = 200;
-});
 
 app.listen(3000);
 

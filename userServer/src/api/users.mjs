@@ -9,7 +9,9 @@ async function getUser(ctx, next) {
 }
 
 async function createUser(ctx, next) {
+  console.log('here2');
   const data = ctx.request.body;
+  console.log('data', data);
   const user = await User.createUser(data);
   ctx.state.user = user;
   await next();
@@ -37,7 +39,7 @@ async function deleteUser(ctx, next) {
   await next();
 }
 
-async function outputUser() {
+async function outputUser(ctx) {
   if (ctx.state.user) {
     ctx.body = ctx.state.user;
   } else {
