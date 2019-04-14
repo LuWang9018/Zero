@@ -1,0 +1,29 @@
+$small-width: rem(620px);
+
+.Polaris-Modal__BodyWrapper {
+  display: flex;
+  flex-grow: 1;
+  border-radius: border-radius(large);
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.Polaris-Modal__Body {
+  width: 100%;
+}
+
+.Polaris-Modal__IFrame {
+  display: block;
+  width: $small-width;
+  max-width: 100vw;
+  border: none;
+
+  @include breakpoint-after(layout-width(page-with-nav)) {
+    max-width: $small-width;
+  }
+}
+
+.Polaris-Modal__Spinner {
+  margin: spacing();
+  text-align: center;
+}

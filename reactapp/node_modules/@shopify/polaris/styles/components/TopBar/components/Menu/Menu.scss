@@ -1,0 +1,69 @@
+$activator-variables: (
+  min-width: rem(36px),
+  border-left: 1px solid rgba(color('black'), 0.42),
+  transition: background-color 0.1s,
+  focus-background-color: rgba(color('white'), 0.16),
+  hover-background-color: rgba(color('white'), 0.08),
+  active-background-color: rgba(color('black'), 0.28),
+  focus-opacity: 0.85,
+);
+
+@function menu($variable) {
+  @return map-get($activator-variables, $variable);
+}
+
+.Polaris-TopBar-Menu__ActivatorWrapper {
+  height: top-bar-height();
+  display: flex;
+  align-items: center;
+}
+
+.Polaris-TopBar-Menu__Activator {
+  @include unstyled-button;
+  color: var(--top-bar-color);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: menu(min-width);
+  padding: rem(6px) spacing(tight);
+  border: 0;
+  cursor: pointer;
+  transition: menu(transition);
+  margin-right: spacing(tight);
+  border-radius: border-radius();
+
+  &:focus {
+    background-color: menu(focus-background-color);
+    outline: none;
+  }
+
+  &:hover {
+    background-color: menu(hover-background-color);
+  }
+
+  &:active,
+  &[aria-expanded='true'] {
+    background-color: menu(active-background-color);
+    outline: none;
+    transition: none;
+  }
+
+  @include breakpoint-before(layout-width(page-with-nav), false) {
+    margin: 0 spacing(extra-tight);
+
+    &:focus,
+    &:hover,
+    &:active,
+    &[aria-expanded='true'] {
+      background-color: transparent;
+      opacity: menu(focus-opacity);
+    }
+  }
+}
+
+.Polaris-TopBar-Menu__Section {
+  margin-top: spacing(tight);
+  padding-top: spacing(tight);
+  border-top: border();
+}

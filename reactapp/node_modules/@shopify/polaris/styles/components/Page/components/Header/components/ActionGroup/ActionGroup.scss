@@ -1,0 +1,9 @@
+.Polaris-Header-ActionGroup__Details {
+  padding: spacing();
+  margin-top: -1 * spacing();
+
+  &.Polaris-Header-ActionGroup--withActions {
+    margin-top: -1 * spacing(tight);
+    border-top: border();
+  }
+}

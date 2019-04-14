@@ -1,0 +1,17 @@
+.Polaris-Modal-CloseButton {
+  @include unstyled-button;
+  margin-left: spacing(loose);
+  margin-right: -1 * spacing(tight);
+  padding: spacing(tight);
+
+  &:focus,
+  &:active {
+    border-radius: border-radius(large);
+    background: plain-button-background();
+  }
+}
+
+.Polaris-Modal-CloseButton--withoutTitle {
+  position: absolute;
+  right: spacing(tight);
+}

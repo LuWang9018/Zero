@@ -1,0 +1,143 @@
+$action-horizontal-padding: (1.5 * spacing(tight));
+
+.Polaris-Page-Header {
+  @include page-header-layout;
+}
+
+.Polaris-Page-Header__Header--hasPagination,
+.Polaris-Page-Header__Header--hasBreadcrumbs,
+.Polaris-Page-Header__Header--hasRollup {
+  @include page-header-has-navigation;
+}
+
+.Polaris-Page-Header__Header--hasSecondaryActions {
+  @include page-header-has-secondary-actions;
+}
+
+.Polaris-Page-Header__Header--hasSeparator {
+  padding-bottom: spacing();
+  border-bottom: border();
+
+  + .Polaris-Page-Header__Content {
+    margin-top: spacing(loose);
+  }
+}
+
+.Polaris-Page-Header__Header--hasRollup {
+  .Polaris-Page-Header__SecondaryActions {
+    display: none;
+  }
+
+  .Polaris-Page-Header__IndividualActions {
+    display: none;
+  }
+
+  .Polaris-Page-Header__Pagination {
+    display: none;
+  }
+
+  @include page-content-when-not-partially-condensed {
+    .Polaris-Page-Header__Rollup {
+      display: none;
+    }
+
+    .Polaris-Page-Header__SecondaryActions {
+      display: flex;
+    }
+
+    .Polaris-Page-Header__IndividualActions {
+      display: flex;
+    }
+
+    .Polaris-Page-Header__Pagination {
+      display: flex;
+    }
+  }
+}
+
+.Polaris-Page-Header__Title--hidden {
+  @include visually-hidden;
+}
+
+.Polaris-Page-Header__PrimaryAction {
+  display: flex;
+  align-items: center;
+
+  .Polaris-Page-Header__MainContent > & {
+    display: none;
+    margin-left: spacing(loose);
+  }
+
+  @include page-content-when-not-partially-condensed {
+    display: none;
+
+    .Polaris-Page-Header__MainContent > & {
+      display: flex;
+    }
+  }
+}
+
+.Polaris-Page-Header__Rollup {
+  margin-top: spacing(extra-tight);
+}
+
+.Polaris-Page-Header__Pagination {
+  margin-left: auto;
+  line-height: 1;
+}
+
+.Polaris-Page-Header__Actions {
+  @include page-actions-layout;
+}
+
+.Polaris-Page-Header__Navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: spacing(extra-tight);
+}
+
+.Polaris-Page-Header__MainContent {
+  display: flex;
+  align-items: center;
+}
+
+.Polaris-Page-Header__TitleAndRollup {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  .Polaris-Page-Header__Rollup {
+    @include page-header-without-navigation;
+  }
+}
+
+.Polaris-Page-Header__TitleAndActions {
+  flex: 1 1 0%;
+}
+
+.Polaris-Page-Header__Title {
+  @include page-title-layout;
+}
+
+.Polaris-Page-Header__SecondaryActions {
+  flex: 1;
+}
+
+.Polaris-Page-Header__IndividualActions {
+  display: flex;
+  align-items: center;
+
+  > .Polaris-Page-Header__IndividualAction {
+    display: inline-flex;
+
+    &:first-child {
+      // Compensates for the fact that we push the icon slightly to the left
+      margin-left: -1 * $action-horizontal-padding;
+    }
+
+    &:last-child {
+      margin-right: -1 * $action-horizontal-padding;
+    }
+  }
+}

@@ -1,0 +1,27 @@
+.Polaris-List {
+  padding-left: spacing(loose);
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style: disc outside none;
+
+  + .Polaris-List {
+    margin-top: spacing();
+  }
+}
+
+.Polaris-List--typeNumber {
+  padding-left: spacing(extra-loose);
+  list-style: decimal outside none;
+}
+
+.Polaris-List__Item {
+  margin-bottom: spacing(tight);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .Polaris-List:first-child {
+    margin-top: spacing(tight);
+  }
+}

@@ -1,0 +1,245 @@
+$stacking-order: (
+  backdrop: 1,
+  icon: 2,
+);
+
+@mixin color-icon($value, $hue: base) {
+  svg {
+    fill: color($value, $hue);
+  }
+
+  img {
+    filter: filter($value, $hue);
+  }
+}
+
+.Polaris-Icon {
+  display: block;
+  height: rem(20px);
+  width: rem(20px);
+  max-height: 100%;
+  max-width: 100%;
+  margin: auto;
+}
+
+.Polaris-Icon--hasBackdrop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: spacing(extra-tight);
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: z-index(backdrop, $stacking-order);
+    top: -1 * spacing(extra-tight);
+    bottom: -1 * spacing(extra-tight);
+    left: -1 * spacing(extra-tight);
+    right: -1 * spacing(extra-tight);
+    border-radius: 50%;
+  }
+}
+
+.Polaris-Icon--isColored {
+  color: color('white');
+}
+
+.Polaris-Icon--colorWhite {
+  @include color-icon('white');
+  color: transparent;
+}
+
+.Polaris-Icon--colorBlack {
+  @include color-icon('black');
+}
+
+.Polaris-Icon--colorSkyLighter {
+  @include color-icon('sky', 'lighter');
+}
+
+.Polaris-Icon--colorSkyLight {
+  @include color-icon('sky', 'light');
+}
+
+.Polaris-Icon--colorSky {
+  @include color-icon('sky');
+}
+
+.Polaris-Icon--colorSkyDark {
+  @include color-icon('sky', 'dark');
+}
+
+.Polaris-Icon--colorInkLightest {
+  @include color-icon('ink', 'lightest');
+}
+
+.Polaris-Icon--colorInkLighter {
+  @include color-icon('ink', 'lighter');
+
+  &::after {
+    background-color: color('sky');
+  }
+}
+
+.Polaris-Icon--colorInkLight {
+  @include color-icon('ink', 'light');
+}
+
+.Polaris-Icon--colorInk {
+  @include color-icon('ink');
+
+  &::after {
+    background-color: color('sky');
+  }
+}
+
+.Polaris-Icon--colorBlueLighter {
+  @include color-icon('blue', 'lighter');
+}
+
+.Polaris-Icon--colorBlueLight {
+  @include color-icon('blue', 'light');
+}
+
+.Polaris-Icon--colorBlue {
+  @include color-icon('blue');
+}
+
+.Polaris-Icon--colorBlueDark {
+  @include color-icon('blue', 'dark');
+
+  &::after {
+    background-color: color('blue', 'light');
+  }
+}
+
+.Polaris-Icon--colorBlueDarker {
+  @include color-icon('blue', 'darker');
+}
+
+.Polaris-Icon--colorIndigoLighter {
+  @include color-icon('indigo', 'lighter');
+}
+
+.Polaris-Icon--colorIndigoLight {
+  @include color-icon('indigo', 'light');
+}
+
+.Polaris-Icon--colorIndigo {
+  @include color-icon('indigo');
+}
+
+.Polaris-Icon--colorIndigoDark {
+  @include color-icon('indigo', 'dark');
+}
+
+.Polaris-Icon--colorIndigoDarker {
+  @include color-icon('indigo', 'darker');
+}
+
+.Polaris-Icon--colorTealLighter {
+  @include color-icon('teal', 'lighter');
+}
+
+.Polaris-Icon--colorTealLight {
+  @include color-icon('teal', 'light');
+}
+
+.Polaris-Icon--colorTeal {
+  @include color-icon('teal');
+
+  &::after {
+    background-color: color('white');
+  }
+}
+
+.Polaris-Icon--colorTealDark {
+  @include color-icon('teal', 'dark');
+
+  &::after {
+    background-color: color('teal', 'light');
+  }
+}
+
+.Polaris-Icon--colorTealDarker {
+  @include color-icon('teal', 'darker');
+}
+
+.Polaris-Icon--colorGreenLighter {
+  @include color-icon('green', 'lighter');
+}
+
+.Polaris-Icon--colorGreen {
+  @include color-icon('green');
+
+  &::after {
+    background-color: color('green', 'lighter');
+  }
+}
+
+.Polaris-Icon--colorGreenDark {
+  @include color-icon('green', 'dark');
+
+  &::after {
+    background-color: color('green', 'light');
+  }
+}
+
+.Polaris-Icon--colorYellowLighter {
+  @include color-icon('yellow', 'lighter');
+}
+
+.Polaris-Icon--colorYellow {
+  @include color-icon('yellow');
+}
+
+.Polaris-Icon--colorYellowDark {
+  @include color-icon('yellow', 'dark');
+
+  &::after {
+    background-color: color('yellow', 'light');
+  }
+}
+
+.Polaris-Icon--colorOrange {
+  @include color-icon('orange');
+}
+
+.Polaris-Icon--colorOrangeDark {
+  @include color-icon('orange', 'dark');
+}
+
+.Polaris-Icon--colorRedLighter {
+  @include color-icon('red', 'lighter');
+}
+
+.Polaris-Icon--colorRed {
+  @include color-icon('red');
+}
+
+.Polaris-Icon--colorRedDark {
+  @include color-icon('red', 'dark');
+
+  &::after {
+    background-color: color('red', 'light');
+  }
+}
+
+.Polaris-Icon--colorPurple {
+  @include color-icon('purple');
+}
+
+.Polaris-Icon__Svg,
+.Polaris-Icon__Img {
+  position: relative;
+  z-index: z-index(icon, $stacking-order);
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.Polaris-Icon__Placeholder {
+  padding-bottom: 100%;
+  background: currentColor;
+}

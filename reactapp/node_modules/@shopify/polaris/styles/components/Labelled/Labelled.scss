@@ -1,0 +1,24 @@
+.Polaris-Labelled--hidden > .Polaris-Labelled__LabelWrapper {
+  @include visually-hidden;
+}
+
+.Polaris-Labelled__LabelWrapper {
+  margin-bottom: spacing(extra-tight);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.Polaris-Labelled__HelpText {
+  @include text-style-body;
+  @include text-emphasis-subdued;
+  margin-top: spacing(extra-tight);
+}
+
+.Polaris-Labelled__Error {
+  margin-top: spacing(extra-tight);
+  word-break: break-word;
+  overflow-wrap: break-word;
+}

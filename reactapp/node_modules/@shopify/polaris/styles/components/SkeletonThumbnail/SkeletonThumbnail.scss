@@ -1,0 +1,21 @@
+@mixin skeleton-thumbnail-size($size) {
+  height: thumbnail-size($size);
+  width: thumbnail-size($size);
+}
+
+.Polaris-SkeletonThumbnail {
+  @include skeleton-shimmer;
+  @include skeleton-content;
+}
+
+.Polaris-SkeletonThumbnail--sizeSmall {
+  @include skeleton-thumbnail-size(small);
+}
+
+.Polaris-SkeletonThumbnail--sizeMedium {
+  @include skeleton-thumbnail-size(medium);
+}
+
+.Polaris-SkeletonThumbnail--sizeLarge {
+  @include skeleton-thumbnail-size(large);
+}

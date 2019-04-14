@@ -1,0 +1,16 @@
+$height: rem(3px);
+
+.Polaris-Frame-Loading {
+  overflow: hidden;
+  height: rem($height);
+  background-color: color('sky');
+  opacity: 1;
+}
+
+.Polaris-Frame-Loading__Level {
+  width: 100%;
+  height: 100%;
+  transform-origin: 0;
+  background-color: color('teal');
+  transition: transform duration(slowest) easing(out);
+}
