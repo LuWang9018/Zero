@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.mjs",
+  "scripts": {
+    "test": "test",
+    "server": "node --experimental-modules src/index.mjs"
+  },
+  "author": "Lu",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "koa-router": "^7.4.0",
+    "kow": "^3.2.3",
+    "pwd": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.48",
+    "@types/koa-router": "^7.0.40",
+    "nodemon": "^1.18.11",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.3"
+  }
+}
