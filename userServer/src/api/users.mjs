@@ -1,5 +1,5 @@
-import { requireAuth } from './auth';
-import * as User from '../models/User';
+import { requireAuth } from "./auth";
+import * as User from "../models/User";
 
 async function getUser(ctx, next) {
   const { id } = ctx.params;
@@ -9,9 +9,7 @@ async function getUser(ctx, next) {
 }
 
 async function createUser(ctx, next) {
-  console.log('here2');
   const data = ctx.request.body;
-  console.log('data', data);
   const user = await User.createUser(data);
   ctx.state.user = user;
   await next();
@@ -49,11 +47,11 @@ async function outputUser(ctx) {
 }
 
 const api = router => {
-  router.get('/api/users/:id', requireAuth('read'), getUser, outputUser);
-  router.get('/api/users', requireAuth('read'), listUsers, outputUser);
-  router.post('/api/users', createUser, outputUser);
-  router.put('/api/users/:id', requireAuth('update'), updateUser, outputUser);
-  router.del('/api/users/:id', requireAuth('delete'), deleteUser, outputUser);
+  router.get("/api/users/:id", requireAuth("read"), getUser, outputUser);
+  router.get("/api/users", requireAuth("read"), listUsers, outputUser);
+  router.post("/api/users", createUser, outputUser);
+  router.put("/api/users/:id", requireAuth("update"), updateUser, outputUser);
+  router.del("/api/users/:id", requireAuth("delete"), deleteUser, outputUser);
 };
 
 export default { api };

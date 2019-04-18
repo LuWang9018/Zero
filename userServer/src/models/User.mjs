@@ -1,30 +1,42 @@
-import { DBconnection } from '../db/db';
-import uuidv4 from 'uuid/v4';
-import { auth, genHash } from './Utils';
-import util from 'util';
+import { DBconnection } from "../db/db";
+import uuidv4 from "uuid/v4";
+import { auth, genHash } from "./Utils";
+import util from "util";
+
 export async function createUser(attrs, options = {}) {
-  console.log(attrs, 'attrs');
+  //1. check user name
+
+  //2. check email
+
   let userId = uuidv4();
   let user = await genHash({ password: attrs.password });
 
-  let query = util.format(
-    "CALL createUser('%s', '%s', '%s', '%s', '%s')",
-    userId.toString(),
-    attrs.name,
-    user.hash,
-    user.salt,
-    attrs.imagePath
-  );
-  console.log(query);
-  DBconnection.query(query, true, (error, results, fields) => {
-    if (error) {
-      return console.error(error.message);
-    }
-    console.log(results);
-  });
+  DBconnection("user")
+    //.returning(["id", "name"])
+    .insert([
+      {
+        id: userId,
+        name: attrs.name,
+        hash: user.hash,
+        salt: user.salt,
+        imagePath: attrs.imagePath
+      }
+    ])
+    .on("query-response", function(response) {
+      return 1;
+    })
+    .catch(function(error) {
+      //console.log("error", error);
+      //TODO: add error handling later
+      return 0;
+    });
 }
 
-export async function listUsers(query, options = {}) {}
+export async function listUsers(query, options = {}) {
+  let result = DBconnection.select("user.id", "user.name", "email.email")
+    .from("user")
+    .innerJoin("email", "user.id", "=", "email.userId");
+}
 
 export async function findUser(query, options = {}) {}
 
