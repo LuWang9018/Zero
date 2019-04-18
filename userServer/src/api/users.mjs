@@ -18,7 +18,7 @@ async function createUser(ctx, next) {
 async function listUsers(ctx, next) {
   const query = ctx.request.query;
   const users = await User.listUsers(query);
-  ctx.state.user = user;
+  ctx.state.user = users;
   await next();
 }
 
