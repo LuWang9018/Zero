@@ -45,7 +45,7 @@ export async function createUser(attrs, options = {}) {
         imagePath: attrs.imagePath
       }
     ])
-    .on("query-response", function(response) {
+    .then(() => {
       DBconnection("email")
         .insert([
           {
@@ -56,7 +56,7 @@ export async function createUser(attrs, options = {}) {
             userID: userId
           }
         ])
-        .then(response => {
+        .then(function(response) {
           return {
             result: 1,
             msg: response
