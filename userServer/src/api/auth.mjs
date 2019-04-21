@@ -1,5 +1,7 @@
+import { runInNewContext } from 'vm';
+
 export function requireAuth(permission) {
-  return ctx => {
+  return async ctx => {
     console.log('Auth user ', permission);
     switch (permission) {
       case 'read':
