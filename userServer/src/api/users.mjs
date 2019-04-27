@@ -1,4 +1,4 @@
-import { requireAuth } from './auth';
+import { requireAuth, logout, authenticateUser } from './auth';
 import * as User from '../models/User';
 
 async function getUser(ctx, next) {
@@ -39,6 +39,7 @@ async function deleteUser(ctx, next) {
 
 async function outputUser(ctx) {
   if (ctx.state.user) {
+    console.log(ctx.state.user);
     ctx.body = ctx.state.user;
   } else {
     //TODO: CATCH ERROR
@@ -70,6 +71,9 @@ const api = router => {
     deleteUser,
     outputUser
   );
+  router.get('/api/session', requireAuth('read'), outputUser);
+  router.post('/api/session', authenticateUser);
+  router.del('/api/session', logout);
 };
 
 export default { api };

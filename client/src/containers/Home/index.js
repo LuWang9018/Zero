@@ -19,11 +19,19 @@ import {
   Page,
   SkeletonPage,
 } from '@shopify/polaris';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { getUser, logout } from '../../modules/users';
 
-export default class Home extends React.Component {
+class Home extends React.Component {
   defaultState = {
     emailFieldValue: 'dharma@jadedpixel.com',
     nameFieldValue: 'Jaded Pixel',
+  };
+
+  static contextTypes = {
+    router: PropTypes.object,
+    store: PropTypes.object,
   };
 
   state = {
@@ -40,6 +48,13 @@ export default class Home extends React.Component {
     storeName: this.defaultState.nameFieldValue,
     supportSubject: '',
     supportMessage: '',
+  };
+
+  logout = async () => {
+    const { logout } = this.props;
+    await logout();
+    const { router } = this.context;
+    router.history.push('/login');
   };
 
   render() {
@@ -66,7 +81,7 @@ export default class Home extends React.Component {
 
     const userMenuActions = [
       {
-        items: [{ content: 'Community forums' }],
+        items: [{ content: 'Sign Out', onAction: this.logout }],
       },
     ];
 
@@ -343,3 +358,10 @@ export default class Home extends React.Component {
     this.setState({ supportMessage });
   };
 }
+
+export default connect(
+  state => ({
+    user: getUser(state),
+  }),
+  { logout }
+)(Home);

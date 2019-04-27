@@ -1,83 +1,54 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Card,
   TopBar,
-  Modal,
   FormLayout,
   TextField,
   AppProvider,
-  SkeletonBodyText,
   Layout,
-  TextContainer,
-  SkeletonDisplayText,
   Frame,
-  Toast,
-  ContextualSaveBar,
-  Loading,
   Page,
-  SkeletonPage,
   Button,
 } from '@shopify/polaris';
+import { connect } from 'react-redux';
+import { authenticate } from 'modules/users';
+import { getUser } from '../../modules/users';
+import PropTypes from 'prop-types';
 
-export default class SignIn extends React.Component {
-  defaultState = {
-    emailFieldValue: 'dharma@jadedpixel.com',
-    nameFieldValue: 'Jaded Pixel',
+class SignIn extends Component {
+  state = {};
+
+  static contextTypes = {
+    router: PropTypes.object,
+    store: PropTypes.object,
   };
 
-  state = {
-    showToast: false,
-    isLoading: false,
-    isDirty: false,
-    userMenuOpen: false,
-    showMobileNavigation: false,
-    modalActive: false,
-    nameFieldValue: this.defaultState.nameFieldValue,
-    emailFieldValue: this.defaultState.emailFieldValue,
-    storeName: this.defaultState.nameFieldValue,
-    supportSubject: '',
-    supportMessage: '',
+  login = async () => {
+    const { username, password } = this.state;
+    const { authenticate } = this.props;
+    const { router } = this.context;
+    const user = await authenticate(username, password);
+    if (user) {
+      router.history.push('/');
+    }
   };
 
   render() {
-    const {
-      showToast,
-      isLoading,
-      isDirty,
-      nameFieldValue,
-      emailFieldValue,
-      modalActive,
-    } = this.state;
-
-    const toastMarkup = showToast ? (
-      <Toast
-        onDismiss={this.toggleState('showToast')}
-        content="Changes saved"
-      />
-    ) : null;
-
-    const contextualSaveBarMarkup = isDirty ? (
-      <ContextualSaveBar
-        message="Unsaved changes"
-        saveAction={{
-          onAction: this.handleSave,
-        }}
-        discardAction={{
-          onAction: this.handleDiscard,
-        }}
-      />
-    ) : null;
-
+    const { username, password } = this.state;
+    const { user } = this.props;
+    const { router } = this.context;
+    if (user) {
+      router.history.push('/');
+    }
     const topBarMarkup = (
       <TopBar
         showNavigationToggle={true}
-        onNavigationToggle={this.toggleState('showMobileNavigation')}
+        onNavigationToggle={e =>
+          this.handleFieldChange('showMobileNavigation', e)
+        }
       />
     );
-
-    const loadingMarkup = isLoading ? <Loading /> : null;
-
-    const actualPageMarkup = (
+    const markUp = (
       <Page>
         <Layout>
           <Layout.AnnotatedSection
@@ -95,66 +66,23 @@ export default class SignIn extends React.Component {
               <FormLayout>
                 <TextField
                   label="Username"
-                  value={nameFieldValue}
-                  onChange={this.handleNameFieldChange}
+                  value={username}
+                  onChange={data => this.handleFieldChange('username', data)}
                 />
                 <TextField
                   type="password"
                   label="Password"
-                  value={emailFieldValue}
-                  onChange={this.handleEmailFieldChange}
+                  value={password}
+                  onChange={data => this.handleFieldChange('password', data)}
                 />
-                <Button primary>Login </Button>
+                <Button primary onClick={this.login}>
+                  Login
+                </Button>
               </FormLayout>
             </Card>
           </Layout.AnnotatedSection>
         </Layout>
       </Page>
-    );
-
-    const loadingPageMarkup = (
-      <SkeletonPage>
-        <Layout>
-          <Layout.Section>
-            <Card sectioned>
-              <TextContainer>
-                <SkeletonDisplayText size="small" />
-                <SkeletonBodyText lines={9} />
-              </TextContainer>
-            </Card>
-          </Layout.Section>
-        </Layout>
-      </SkeletonPage>
-    );
-
-    const pageMarkup = isLoading ? loadingPageMarkup : actualPageMarkup;
-
-    const modalMarkup = (
-      <Modal
-        open={modalActive}
-        onClose={this.toggleState('modalActive')}
-        title="Contact support"
-        primaryAction={{
-          content: 'Send',
-          onAction: this.toggleState('modalActive'),
-        }}
-      >
-        <Modal.Section>
-          <FormLayout>
-            <TextField
-              label="Subject"
-              value={this.state.supportSubject}
-              onChange={this.handleSubjectChange}
-            />
-            <TextField
-              label="Message"
-              value={this.state.supportMessage}
-              onChange={this.handleMessageChange}
-              multiline
-            />
-          </FormLayout>
-        </Modal.Section>
-      </Modal>
     );
 
     const theme = {
@@ -177,62 +105,16 @@ export default class SignIn extends React.Component {
     return (
       <div style={{ height: '500px' }}>
         <AppProvider theme={theme}>
-          <Frame topBar={topBarMarkup}>
-            {contextualSaveBarMarkup}
-            {loadingMarkup}
-            {pageMarkup}
-            {toastMarkup}
-            {modalMarkup}
-          </Frame>
+          <Frame topBar={topBarMarkup}>{markUp}</Frame>
         </AppProvider>
       </div>
     );
   }
 
-  toggleState = key => {
-    return () => {
-      this.setState(prevState => ({ [key]: !prevState[key] }));
-    };
-  };
-
-  handleEmailFieldChange = emailFieldValue => {
-    this.setState({ emailFieldValue });
-    if (emailFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleNameFieldChange = nameFieldValue => {
-    this.setState({ nameFieldValue });
-    if (nameFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleSave = () => {
-    this.defaultState.nameFieldValue = this.state.nameFieldValue;
-    this.defaultState.emailFieldValue = this.state.emailFieldValue;
-
-    this.setState({
-      isDirty: false,
-      showToast: true,
-      storeName: this.defaultState.nameFieldValue,
-    });
-  };
-
-  handleDiscard = () => {
-    this.setState({
-      emailFieldValue: this.defaultState.emailFieldValue,
-      nameFieldValue: this.defaultState.nameFieldValue,
-      isDirty: false,
-    });
-  };
-
-  handleSubjectChange = supportSubject => {
-    this.setState({ supportSubject });
-  };
-
-  handleMessageChange = supportMessage => {
-    this.setState({ supportMessage });
-  };
+  handleFieldChange = (key, value) => this.setState({ [key]: value });
 }
+
+export default connect(
+  state => ({ user: getUser(state) }),
+  { authenticate }
+)(SignIn);

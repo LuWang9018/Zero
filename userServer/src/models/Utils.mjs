@@ -1,13 +1,12 @@
 import pass from 'pwd';
 
-export function auth(user) {
-  pass.hash(user.password, user.salt, function(err, hash) {
-    if (user.hash == hash) {
-      return true;
-    }
-  });
-
-  return false;
+export async function passwordVerify(user, password) {
+  const salt = user.salt;
+  const hashed = user.hash;
+  const passwordMatch = await pass
+    .hash(password, salt)
+    .then(({ hash }) => hash === hashed);
+  return passwordMatch;
 }
 
 export async function genHash(user) {

@@ -1,9 +1,27 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Home from './containers/Home';
-import SignIn from './containers/SignIn';
+import Home from 'containers/Home';
+import { authStatus, setUser } from 'modules/users';
+import SignIn from 'containers/SignIn';
+import PropTypes from 'prop-types';
 
-class App extends Component {
+export default class App extends Component {
+  static contextTypes = {
+    router: PropTypes.object,
+    store: PropTypes.object,
+  };
+
+  componentDidMount() {
+    const { store, router } = this.context;
+    store.dispatch(authStatus()).then(user => {
+      if (!user) {
+        router.history.push('/login');
+      } else {
+        store.dispatch(setUser(user));
+      }
+    });
+  }
+
   render() {
     return (
       <div>
@@ -15,5 +33,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

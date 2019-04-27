@@ -1,7 +1,6 @@
 import { DBconnection } from '../db/db';
 import uuidv4 from 'uuid/v4';
-import { auth, genHash } from './Utils';
-import util from 'util';
+import { passwordVerify, genHash } from './Utils';
 
 export async function createUser(attrs, options = {}) {
   console.log('!--------------------------!');
@@ -85,6 +84,27 @@ export async function createUser(attrs, options = {}) {
   return data;
 }
 
+export async function findByCredential(username, password) {
+  if (!username || !password) return null;
+  console.log(`Validating ${username} and ${password}`);
+  /**
+   *  TODO: email login....
+   */
+  const result = await new Promise(async (resolve, reject) => {
+    const user = await DBconnection('user')
+      .select('*')
+      .where({ name: username })
+      .first();
+    if (!user) return resolve(null);
+    console.log(user);
+    const passwordMatch = await passwordVerify(user, password);
+    if (passwordMatch) return resolve(user);
+    return resolve(null);
+  });
+  console.log(result);
+  return result;
+}
+
 export async function listUsers(query, options = {}) {
   console.log('list user query:', query);
   let data = await new Promise((resolve, reject) => {
@@ -105,21 +125,10 @@ export async function listUsers(query, options = {}) {
 }
 
 export async function findUser(query, options = {}) {
-  console.log('finduser called');
-  let data = await new Promise((resolve, reject) => {
-    DBconnection('userFull')
-      .select('*')
-      .where(query)
-      .then(rows => {
-        //console.log(rows);
-        return resolve(rows);
-      })
-      .catch(function(error) {
-        //console.log("error", error);
-        //TODO: add error handling later
-        return reject(error);
-      });
-  });
+  const data = await DBconnection('userFull')
+    .select('*')
+    .where(query)
+    .first();
   return data;
 }
 
@@ -127,7 +136,6 @@ export async function updateUser(query, data, options = {}) {
   knex('email')
     .where(query)
     .update(data);
-
   knex('user')
     .where(query)
     .update(data);
