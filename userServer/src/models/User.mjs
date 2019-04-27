@@ -124,9 +124,9 @@ export async function findUser(query, options = {}) {
 }
 
 export async function updateUser(query, data, options = {}) {
-  knex('email')
-    .where(query)
-    .update(data);
+  // knex('email')
+  //   .where(query)
+  //   .update(data);
 
   knex('user')
     .where(query)
