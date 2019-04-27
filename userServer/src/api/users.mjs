@@ -1,7 +1,6 @@
 import { requireAuth, logout, authenticateUser } from './auth';
 import * as User from '../models/User';
 
-//user
 async function getUser(ctx, next) {
   const { userId } = ctx.params;
   const user = await User.findUser({ userId });
@@ -46,35 +45,25 @@ async function deleteUser(ctx, next) {
 
 async function outputUser(ctx) {
   if (ctx.state.user) {
-    console.log(ctx.state.user);
     ctx.body = ctx.state.user;
   } else {
-    //TODO: CATCH ERROR
     ctx.status = 404;
   }
 }
 
 const api = router => {
-  router.get(
-    '/api/users/:userId', //requireAuth('read'),
-    getUser,
-    outputUser
-  );
-  router.get(
-    '/api/users', //requireAuth('read'),
-    listUsers,
-    outputUser
-  );
+  router.get('/api/users/:userId', requireAuth('read'), getUser, outputUser);
+  router.get('/api/users', requireAuth('read'), listUsers, outputUser);
   router.post('/api/users', createUser, outputUser);
   router.put(
     '/api/users/:userId',
-    //requireAuth('update'),
+    requireAuth('update'),
     updateUser,
     outputUser
   );
   router.del(
     '/api/users/:userId',
-    //requireAuth('delete'),
+    requireAuth('delete'),
     deleteUser,
     outputUser
   );

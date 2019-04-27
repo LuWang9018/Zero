@@ -6,10 +6,13 @@ import {
   TextField,
   Button,
 } from '@shopify/polaris';
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function SiginForm(props) {
-  const { username, password, onChange, login } = props;
+  const { login } = props;
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+
   return (
     <Page>
       <Layout>
@@ -46,15 +49,15 @@ export default function SiginForm(props) {
               <TextField
                 label="Username"
                 value={username}
-                onChange={data => onChange('username', data)}
+                onChange={data => setUserName(data)}
               />
               <TextField
                 type="password"
                 label="Password"
                 value={password}
-                onChange={data => onChange('password', data)}
+                onChange={data => setPassword(data)}
               />
-              <Button primary onClick={login}>
+              <Button primary onClick={() => login(username, password)}>
                 Login
               </Button>
             </FormLayout>

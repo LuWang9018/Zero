@@ -23,18 +23,12 @@ const theme = {
 };
 
 class SignIn extends Component {
-  state = {
-    username: '',
-    password: '',
-  };
-
   static contextTypes = {
     router: PropTypes.object,
     store: PropTypes.object,
   };
 
-  login = async () => {
-    const { username, password } = this.state;
+  login = async (username, password) => {
     const { authenticate } = this.props;
     const { router } = this.context;
     const user = await authenticate(username, password);
@@ -69,19 +63,11 @@ class SignIn extends Component {
         }
       />
     );
-
-    const { username, password } = this.state;
-
     return (
       <div style={{ height: '500px' }}>
         <AppProvider theme={theme}>
           <Frame topBar={topBarMarkup}>
-            <SiginForm
-              username={username}
-              password={password}
-              onChange={this.handleFieldChange}
-              login={this.login}
-            />
+            <SiginForm login={this.login} />
           </Frame>
         </AppProvider>
       </div>
