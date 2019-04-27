@@ -1,6 +1,7 @@
 import { requireAuth, logout, authenticateUser } from './auth';
 import * as User from '../models/User';
 
+//user
 async function getUser(ctx, next) {
   const { userId } = ctx.params;
   const user = await User.findUser({ userId });
@@ -25,7 +26,7 @@ async function listUsers(ctx, next) {
 async function updateUser(ctx, next) {
   const data = ctx.request.body;
   const { userId } = ctx.params;
-  const user = User.updateUser({ userId }, data);
+  const user = await User.updateUser({ userId }, data);
   ctx.state.user = user;
   await next();
 }

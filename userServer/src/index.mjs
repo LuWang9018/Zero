@@ -3,12 +3,11 @@ import Router from 'koa-router';
 import logger from 'koa-logger';
 import koaBody from 'koa-body';
 import users from './api/users';
+import email from './api/email';
 import passport from 'passport';
 import './api/passport';
 import session from 'koa-session';
 import cors from 'koa-cors2';
-
-//import { DBconnection } from "./db/db";
 
 const app = new Koa();
 const router = new Router();
@@ -40,6 +39,7 @@ app.use(passport.session());
 app.use(session(sessionConfig, app));
 
 users.api(router);
+email.api(router);
 
 app.use(async (ctx, next) => {
   try {
@@ -50,5 +50,11 @@ app.use(async (ctx, next) => {
   }
 });
 app.use(router.routes());
+<<<<<<< HEAD
 app.listen(5000);
+=======
+
+app.listen(5000);
+
+>>>>>>> 04e574729471a72c50873e626865aaadcfad8cf9
 console.log('Server running on port 5000');
