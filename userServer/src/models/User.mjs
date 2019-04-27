@@ -3,25 +3,6 @@ import uuidv4 from 'uuid/v4';
 import { passwordVerify, genHash } from './Utils';
 
 export async function createUser(attrs, options = {}) {
-  console.log('!--------------------------!');
-
-  //1. check user name
-  const checkUser = await listUsers({ name: attrs.name });
-  console.log(
-    '=>>>>>>>>>>>>>>>>>>>>>>',
-    checkUser,
-    '=========length',
-    checkUser.length,
-    'name',
-    attrs.name
-  );
-  if (checkUser.length != 0) {
-    return {
-      result: 0,
-      msg: 'user name already been taken',
-    };
-  }
-  //2. check email
   const checkEmail = await listUsers({ email: attrs.email });
   if (checkEmail.length != 0) {
     return {
@@ -29,59 +10,27 @@ export async function createUser(attrs, options = {}) {
       msg: 'email already used',
     };
   }
-
-  let userId = uuidv4();
-  let emailId = uuidv4();
-  let user = await genHash({ password: attrs.password });
-
-  let data = await new Promise((resolve, reject) => {
-    DBconnection('user')
-      .insert([
-        {
-          userId: userId,
-          name: attrs.name,
-          hash: user.hash,
-          salt: user.salt,
-          imagePath: attrs.imagePath,
-        },
-      ])
-      .then(() => {
-        DBconnection('email')
-          .insert([
-            {
-              emailId: emailId,
-              email: attrs.email,
-              verified: 0,
-              primary: 1,
-              userID: userId,
-            },
-          ])
-          .then(function(response) {
-            return resolve({
-              result: 1,
-              msg: response,
-            });
-          })
-          .catch(function(error) {
-            console.log('error', error);
-            //TODO: add error handling later
-            return reject({
-              result: 0,
-              msg: 'insert email failed',
-            });
-          });
-      })
-      .catch(function(error) {
-        console.log('error', error);
-        //TODO: add error handling later
-        return reject({
-          result: 0,
-          msg: 'insert user failed',
-        });
-      });
-  });
-
-  return data;
+  const { salt, hash } = await genHash({ password: attrs.password });
+  const userAttr = {
+    username: attrs.username,
+    imagePath: attrs.imagePath,
+    hash,
+    salt,
+  };
+  if (!userAttr.userId) userAttr.userId = uuidv4();
+  try {
+    await DBconnection('user').insert(userAttr);
+    await DBconnection('email').insert({
+      emailId: uuidv4(),
+      email: attrs.email,
+      verified: 0,
+      primary: 1,
+      userID: userAttr.userId,
+    });
+    return { status: 'ok', user: userAttr };
+  } catch (e) {
+    return { status: 'failed', msg: 'failed to create new user ' };
+  }
 }
 
 export async function findByCredential(username, password) {
@@ -93,7 +42,7 @@ export async function findByCredential(username, password) {
   const result = await new Promise(async (resolve, reject) => {
     const user = await DBconnection('user')
       .select('*')
-      .where({ name: username })
+      .where({ username })
       .first();
     if (!user) return resolve(null);
     console.log(user);

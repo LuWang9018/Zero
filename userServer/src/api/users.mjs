@@ -11,9 +11,15 @@ async function getUser(ctx, next) {
 
 async function createUser(ctx, next) {
   const data = ctx.request.body;
-  const user = await User.createUser(data);
-  ctx.state.user = user;
-  await next();
+  const result = await User.createUser(data);
+  if (result.status === 'ok') {
+    ctx.state.user = result.user;
+    await ctx.logIn(result.user);
+    await next();
+  } else {
+    ctx.status = 422;
+    ctx.body = result;
+  }
 }
 
 async function listUsers(ctx, next) {

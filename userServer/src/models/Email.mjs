@@ -1,7 +1,4 @@
 import { DBconnection } from '../db/db';
-import uuidv4 from 'uuid/v4';
-import { auth, genHash } from './Utils';
-import util from 'util';
 
 export async function updateEmail(query, data, options = {}) {
   if (data.name) {

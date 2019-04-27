@@ -36,6 +36,19 @@ export const authenticate = (username, password) => {
   };
 };
 
+export const createNewUser = attrs => {
+  return async dispatch => {
+    const result = await callApi(`${conf.apiRoot}/api/users`, 'POST', {
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(attrs),
+    });
+    if (result) dispatch(setUser(result));
+    return result;
+  };
+};
+
 export const authStatus = () => {
   return async dispatch => {
     try {

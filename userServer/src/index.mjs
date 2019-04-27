@@ -12,8 +12,6 @@ import cors from 'koa-cors2';
 const app = new Koa();
 const router = new Router();
 
-//
-
 app.use(logger());
 
 app.use(
@@ -50,11 +48,5 @@ app.use(async (ctx, next) => {
   }
 });
 app.use(router.routes());
-<<<<<<< HEAD
 app.listen(5000);
-=======
-
-app.listen(5000);
-
->>>>>>> 04e574729471a72c50873e626865aaadcfad8cf9
 console.log('Server running on port 5000');

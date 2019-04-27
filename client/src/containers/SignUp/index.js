@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { TopBar, AppProvider, Frame } from '@shopify/polaris';
 import { connect } from 'react-redux';
-import { authenticate, createNewUser, getUser } from 'modules/users';
-import SiginForm from 'components/SignInForm';
+import { createNewUser, getUser } from 'modules/users';
+import SignUpForm from 'components/SignUpForm';
 import PropTypes from 'prop-types';
 
 const theme = {
@@ -22,10 +22,11 @@ const theme = {
   },
 };
 
-class SignIn extends Component {
+class SignUp extends Component {
   state = {
-    username: '',
+    name: '',
     password: '',
+    email: '',
   };
 
   static contextTypes = {
@@ -43,11 +44,14 @@ class SignIn extends Component {
     }
   };
 
-  register = async () => {
-    const { newusername, newpassword, newemail } = this.state;
+  signup = async () => {
+    const { username, password, email } = this.state;
     const { createNewUser } = this.props;
     const { router } = this.context;
-    const user = await createNewUser(newusername, newpassword, newemail);
+    if (!username || !password || !email) {
+      return;
+    }
+    const user = await createNewUser({ username, password, email });
     if (user) {
       router.history.push('/');
     }
@@ -70,17 +74,18 @@ class SignIn extends Component {
       />
     );
 
-    const { username, password } = this.state;
+    const { username, password, email } = this.state;
 
     return (
       <div style={{ height: '500px' }}>
         <AppProvider theme={theme}>
           <Frame topBar={topBarMarkup}>
-            <SiginForm
+            <SignUpForm
               username={username}
               password={password}
+              email={email}
               onChange={this.handleFieldChange}
-              login={this.login}
+              signup={this.signup}
             />
           </Frame>
         </AppProvider>
@@ -91,5 +96,5 @@ class SignIn extends Component {
 
 export default connect(
   state => ({ user: getUser(state) }),
-  { authenticate }
-)(SignIn);
+  { createNewUser }
+)(SignUp);
