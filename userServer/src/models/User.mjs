@@ -124,13 +124,33 @@ export async function findUser(query, options = {}) {
 }
 
 export async function updateUser(query, data, options = {}) {
-  // knex('email')
-  //   .where(query)
-  //   .update(data);
+  if (data.password) {
+    let user = await genHash({ password: data.password });
+    data.hash = user.hash;
+    data.salt = user.salt;
+    delete data.password;
+  }
 
-  knex('user')
-    .where(query)
-    .update(data);
+  if (data.name) {
+    delete data.name;
+  }
+
+  if (data.userId) {
+    delete data.userId;
+  }
+  // console.log('query', query);
+  // console.log('data', data);
+  let result = await new Promise((resolve, reject) => {
+    DBconnection('user')
+      .where(query)
+      .update(data)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(function(error) {
+        return reject(error);
+      });
+  });
 }
 
 export async function deleteUser(query, options = {}) {

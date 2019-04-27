@@ -2,8 +2,11 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import logger from 'koa-logger';
 import koaBody from 'koa-body';
-import users from './api/users';
 import pass from 'pwd';
+
+import users from './api/users';
+import email from './api/email';
+
 //import { DBconnection } from "./db/db";
 
 const app = new Koa();
@@ -25,6 +28,7 @@ app.use(
 );
 
 users.api(router);
+email.api(router);
 
 app.use(async (ctx, next) => {
   try {
