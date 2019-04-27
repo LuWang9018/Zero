@@ -11,10 +11,19 @@ export function requireAuth(permission) {
         } else {
           ctx.status = 401;
         }
-        //TODO: READ AUTH
         break;
       case 'update':
-        // TODO: WRITE AUTH
+        if (ctx.isAuthenticated()) {
+          const user = ctx.state.user;
+          const { userId } = ctx.params;
+          if (user.userId !== userId) {
+            ctx.status = 401;
+            return;
+          }
+          await next();
+        } else {
+          ctx.status = 401;
+        }
         break;
       default:
         console.log('Unknow permission ', permission);

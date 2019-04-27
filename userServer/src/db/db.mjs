@@ -11,10 +11,3 @@ export const DBconnection = knex({
   },
   pool: { min: 0, max: 10 }
 });
-
-// export function connectDB() {
-//   DBconnection.connect(function(err) {
-//     if (err) throw err;
-//     console.log("DB Connected!");
-//   });
-// }

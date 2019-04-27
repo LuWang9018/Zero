@@ -16,8 +16,8 @@ async function outputEmail(ctx) {
 
 const api = router => {
   router.put(
-    '/api/email/:userId',
-    //requireAuth('update'),
+    '/api/users/:userId/email',
+    requireAuth('update'),
     updateEmail,
     outputEmail
   );
