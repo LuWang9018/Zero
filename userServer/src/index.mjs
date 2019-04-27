@@ -1,9 +1,9 @@
-import Koa from "koa";
-import Router from "koa-router";
-import logger from "koa-logger";
-import koaBody from "koa-body";
-import users from "./api/users";
-import pass from "pwd";
+import Koa from 'koa';
+import Router from 'koa-router';
+import logger from 'koa-logger';
+import koaBody from 'koa-body';
+import users from './api/users';
+import pass from 'pwd';
 //import { DBconnection } from "./db/db";
 
 const app = new Koa();
@@ -16,11 +16,11 @@ app.use(logger());
 app.use(
   koaBody({
     multipart: true,
-    formLimit: "500mb",
-    jsonLimit: "500mb",
+    formLimit: '500mb',
+    jsonLimit: '500mb',
     formidable: {
-      maxFileSize: 500 * 1024 * 1024
-    }
+      maxFileSize: 500 * 1024 * 1024,
+    },
   })
 );
 
@@ -36,6 +36,6 @@ app.use(async (ctx, next) => {
 });
 app.use(router.routes());
 
-app.listen(3000);
+app.listen(5000);
 
-console.log("Server running on port 3000");
+console.log('Server running on port 5000');
