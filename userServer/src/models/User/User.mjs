@@ -1,6 +1,6 @@
-import { DBconnection } from '../db/db';
+import { userDB } from '../../db/db';
 import uuidv4 from 'uuid/v4';
-import { passwordVerify, genHash } from './Utils';
+import { passwordVerify, genHash } from '../Utils';
 
 export async function createUser(attrs, options = {}) {
   const checkEmail = await listUsers({ email: attrs.email });
@@ -19,8 +19,8 @@ export async function createUser(attrs, options = {}) {
   };
   if (!userAttr.userId) userAttr.userId = uuidv4();
   try {
-    await DBconnection('user').insert(userAttr);
-    await DBconnection('email').insert({
+    await userDB('user').insert(userAttr);
+    await userDB('email').insert({
       emailId: uuidv4(),
       email: attrs.email,
       verified: 0,
@@ -40,7 +40,7 @@ export async function findByCredential(username, password) {
    *  TODO: email login....
    */
   const result = await new Promise(async (resolve, reject) => {
-    const user = await DBconnection('user')
+    const user = await userDB('user')
       .select('*')
       .where({ username })
       .first();
@@ -57,7 +57,7 @@ export async function findByCredential(username, password) {
 export async function listUsers(query, options = {}) {
   console.log('list user query:', query);
   let data = await new Promise((resolve, reject) => {
-    DBconnection('userFull')
+    userDB('userFull')
       .select('*')
       .where(query)
       .then(rows => {
@@ -74,7 +74,7 @@ export async function listUsers(query, options = {}) {
 }
 
 export async function findUser(query, options = {}) {
-  const data = await DBconnection('userFull')
+  const data = await userDB('userFull')
     .select('*')
     .where(query)
     .first();
@@ -99,7 +99,7 @@ export async function updateUser(query, data, options = {}) {
   // console.log('query', query);
   // console.log('data', data);
   let result = await new Promise((resolve, reject) => {
-    DBconnection('user')
+    userDB('user')
       .where(query)
       .update(data)
       .then(result => {
@@ -113,12 +113,12 @@ export async function updateUser(query, data, options = {}) {
 
 export async function deleteUser(query, options = {}) {
   let data = await new Promise((resolve, reject) => {
-    DBconnection('email')
+    userDB('email')
       .where(query)
       .del()
       .then(rows => {
         //console.log(rows);
-        DBconnection('user')
+        userDB('user')
           .where(query)
           .del();
         return resolve({ result: 1, message: 'delete success' });

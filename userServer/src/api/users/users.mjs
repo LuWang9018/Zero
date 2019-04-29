@@ -1,5 +1,5 @@
-import { requireAuth, logout, authenticateUser } from './auth';
-import * as User from '../models/User';
+import { requireAuth, logout, authenticateUser } from '../auth';
+import * as User from '../../models/User/User';
 
 async function getUser(ctx, next) {
   const { userId } = ctx.params;
