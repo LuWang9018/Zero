@@ -1,5 +1,5 @@
-import { requireAuth } from './auth';
-import * as Email from '../models/Email';
+import { requireAuth } from '../auth';
+import * as Email from '../../models/User/Email';
 
 //email
 async function updateEmail(ctx, next) {

@@ -2,12 +2,14 @@ import Koa from 'koa';
 import Router from 'koa-router';
 import logger from 'koa-logger';
 import koaBody from 'koa-body';
-import users from './api/users';
-import email from './api/email';
 import passport from 'passport';
 import './api/passport';
 import session from 'koa-session';
 import cors from 'koa-cors2';
+
+//user
+import users from './api/users/users';
+import email from './api/users/email';
 
 const app = new Koa();
 const router = new Router();

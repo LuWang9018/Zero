@@ -1,4 +1,4 @@
-import * as User from '../models/User';
+import * as User from '../models/User/User';
 import passport from 'koa-passport';
 import { default as LocalStrategy } from 'passport-local';
 
