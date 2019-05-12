@@ -20,7 +20,7 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.10.1",
     "kow": "^3.2.3",
-    "mysql": "^2.16.0",
+    "mysql": "^2.17.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pwd": "^1.1.0",

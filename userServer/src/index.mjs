@@ -11,6 +11,16 @@ import cors from 'koa-cors2';
 import users from './api/users/users';
 import email from './api/users/email';
 
+//DB
+// import { connection } from "./db/db";
+// connection.connect(function(err) {
+//   if (err) {
+//     return console.error("error: " + err.message);
+//   }
+
+//   console.log("Connected to the MySQL server.");
+// });
+
 const app = new Koa();
 const router = new Router();
 

@@ -56,21 +56,18 @@ export async function findByCredential(username, password) {
 
 export async function listUsers(query, options = {}) {
   console.log('list user query:', query);
-  let data = await new Promise((resolve, reject) => {
-    userDB('userFull')
+  try {
+    const data = await userDB('userFull')
       .select('*')
       .where(query)
       .then(rows => {
         console.log('rows', rows);
-        return resolve(rows);
-      })
-      .catch(function(error) {
-        //console.log("error", error);
-        //TODO: add error handling later
-        return reject(error);
+        return rows;
       });
-  });
-  return data;
+    return data;
+  } catch (e) {
+    console.log('listUsers failed:', e);
+  }
 }
 
 export async function findUser(query, options = {}) {
@@ -96,24 +93,23 @@ export async function updateUser(query, data, options = {}) {
   if (data.userId) {
     delete data.userId;
   }
-  // console.log('query', query);
-  // console.log('data', data);
-  let result = await new Promise((resolve, reject) => {
-    userDB('user')
+
+  try {
+    let result = await userDB('user')
       .where(query)
       .update(data)
       .then(result => {
-        resolve(result);
-      })
-      .catch(function(error) {
-        return reject(error);
+        return { status: 'ok', msg: 'update success' };
       });
-  });
+    return result;
+  } catch (e) {
+    return { status: 'failed', msg: 'failed to update user ' };
+  }
 }
 
 export async function deleteUser(query, options = {}) {
-  let data = await new Promise((resolve, reject) => {
-    userDB('email')
+  try {
+    let result = await userDB('email')
       .where(query)
       .del()
       .then(rows => {
@@ -121,12 +117,10 @@ export async function deleteUser(query, options = {}) {
         userDB('user')
           .where(query)
           .del();
-        return resolve({ result: 1, message: 'delete success' });
-      })
-      .catch(function(error) {
-        //console.log("error", error);
-        //TODO: add error handling later
-        return reject(error);
+        return { status: 'ok', msg: 'delete success' };
       });
-  });
+    return result;
+  } catch (e) {
+    return { status: 'failed', msg: 'failed to delete user' };
+  }
 }
