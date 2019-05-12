@@ -6,10 +6,13 @@ import {
   TextField,
   Button,
 } from '@shopify/polaris';
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function RegisterForm(props) {
-  const { username, password, email, onChange, signup } = props;
+  const { signup } = props;
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   return (
     <Page>
       <Layout>
@@ -33,21 +36,21 @@ export default function RegisterForm(props) {
               <TextField
                 label="Username"
                 value={username}
-                onChange={data => onChange('username', data)}
+                onChange={data => setUsername(data)}
               />
               <TextField
                 label="Email"
                 type="email"
                 value={email}
-                onChange={data => onChange('email', data)}
+                onChange={data => setEmail(data)}
               />
               <TextField
                 type="password"
                 label="Password"
                 value={password}
-                onChange={data => onChange('password', data)}
+                onChange={data => setPassword(data)}
               />
-              <Button primary onClick={signup}>
+              <Button primary onClick={() => signup(username, password, email)}>
                 Sign Up
               </Button>
             </FormLayout>

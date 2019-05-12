@@ -23,29 +23,12 @@ const theme = {
 };
 
 class SignUp extends Component {
-  state = {
-    name: '',
-    password: '',
-    email: '',
-  };
-
   static contextTypes = {
     router: PropTypes.object,
     store: PropTypes.object,
   };
 
-  login = async () => {
-    const { username, password } = this.state;
-    const { authenticate } = this.props;
-    const { router } = this.context;
-    const user = await authenticate(username, password);
-    if (user) {
-      router.history.push('/');
-    }
-  };
-
-  signup = async () => {
-    const { username, password, email } = this.state;
+  signup = async (username, password, email) => {
     const { createNewUser } = this.props;
     const { router } = this.context;
     if (!username || !password || !email) {
@@ -74,19 +57,11 @@ class SignUp extends Component {
       />
     );
 
-    const { username, password, email } = this.state;
-
     return (
       <div style={{ height: '500px' }}>
         <AppProvider theme={theme}>
           <Frame topBar={topBarMarkup}>
-            <SignUpForm
-              username={username}
-              password={password}
-              email={email}
-              onChange={this.handleFieldChange}
-              signup={this.signup}
-            />
+            <SignUpForm signup={this.signup} />
           </Frame>
         </AppProvider>
       </div>
