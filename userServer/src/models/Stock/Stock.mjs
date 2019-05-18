@@ -1,62 +1,145 @@
-import { stockDB } from '../../db/db';
+import { DB } from '../../db/db';
+import uuidv4 from 'uuid/v4';
 
-export async function createItem(attrs, options = {}) {
-  const checkEmail = await listUsers({ email: attrs.email });
-  if (checkEmail.length != 0) {
+import { listUsers } from '../User/User';
+
+export async function createItem(userId, attrs, options = {}) {
+  const checkUser = await listUsers({ userId: userId });
+  if (checkUser.length == 0) {
     return {
       result: 0,
-      msg: 'email already used',
+      msg: 'User does not exist',
     };
   }
-  const { salt, hash } = await genHash({ password: attrs.password });
-  const userAttr = {
-    username: attrs.username,
-    imagePath: attrs.imagePath,
-    hash,
-    salt,
-  };
-  if (!userAttr.userId) userAttr.userId = uuidv4();
+
+  let itemAttr = Object.assign({}, attrs);
+  itemAttr.itemId = uuidv4();
+  itemAttr.ownerId = userId;
+
   try {
-    await userDB('user').insert(userAttr);
-    await userDB('email').insert({
-      emailId: uuidv4(),
-      email: attrs.email,
-      verified: 0,
-      primary: 1,
-      userID: userAttr.userId,
-    });
-    return { status: 'ok', user: userAttr };
+    await DB('stock').insert(itemAttr);
+
+    if (itemAttr.itemCurrentPrice) {
+      await changePrice(itemAttr.itemId, itemAttr.itemCurrentPrice);
+    }
+
+    if (itemAttr.itemStock) {
+      await changeQuantity(
+        itemAttr.itemId,
+        itemAttr.itemStock,
+        itemAttr.itemCurrentPrice,
+        { type: 'init' }
+      );
+    }
+
+    return { status: 'ok', stock: itemAttr };
   } catch (e) {
-    return { status: 'failed', msg: 'failed to create new user ' };
+    return { status: 'failed', msg: 'failed to create new item' + e };
   }
 }
 
-// export async function updateEmail(query, data, options = {}) {
-//   if (data.name) {
-//     delete data.name;
-//   }
+export async function listItems(query, options = {}) {
+  console.log('list item query:', query);
+  try {
+    const data = await DB('stock') //TODO: change that to stockFull
+      .select('*')
+      .where(query)
+      .then(rows => {
+        console.log('rows', rows);
+        return rows;
+      });
+    return data;
+  } catch (e) {
+    console.log('listUsers failed:', e);
+  }
+}
 
-//   if (data.userId) {
-//     delete data.userId;
-//   }
+export async function getItems(query, options = {}) {
+  const data = await DB('stock') //TODO: change that to stockFull
+    .select('*')
+    .where(query);
+  return data;
+}
 
-//   let result = await new Promise((resolve, reject) => {
-//     userDB('email')
-//       .where(query)
-//       .update(data)
-//       .then(response => {
-//         return resolve({
-//           result: 1,
-//           msg: response,
-//         });
-//       })
-//       .catch(function(error) {
-//         return resolve({
-//           result: 0,
-//           msg: 'insert email failed: ' + error,
-//         });
-//       });
-//   });
+export async function getItem(query, options = {}) {
+  const data = await DB('stock') //TODO: change that to stockFull
+    .select('*')
+    .where(query)
+    .first();
+  return data;
+}
 
-//   return result;
-// }
+export async function updateStock(query, data, options = {}) {
+  if (data.itemId) {
+    delete data.itemId;
+  }
+  if (data.ownerId) {
+    delete data.ownerId;
+  }
+
+  console.log('query', query);
+
+  console.log(data);
+  try {
+    if (data.itemCurrentPrice) {
+      console.log('query.itemId', query.itemId);
+      changePrice(query.itemId, data.itemCurrentPrice);
+    }
+
+    if (data.itemStock) {
+      const result = await getItem(query);
+      console.log('result', result);
+      changeQuantity(query.itemId, data.itemStock, result.itemCurrentPrice, {
+        type: 'update',
+      });
+    }
+
+    let result = await DB('stock')
+      .where(query)
+      .update(data)
+      .then(result => {
+        return { status: 'ok', msg: 'update success' };
+      });
+    return result;
+  } catch (e) {
+    return { status: 'failed', msg: 'failed to update user ' + e };
+  }
+}
+
+async function changePrice(itemId, price) {
+  const time = Date.now();
+
+  const priceRecord = {
+    historyId: uuidv4(),
+    itemId: itemId,
+    itemPrice: price,
+    itemPriceChangeTime: time,
+  };
+  try {
+    await DB('itempricehistory').insert(priceRecord);
+  } catch (e) {
+    return { status: 'failed', msg: 'failed to create price history ' + e };
+  }
+}
+
+async function changeQuantity(itemId, quantity, price, infoJson) {
+  const time = Date.now();
+
+  const quantityChange = {
+    changeId: uuidv4(),
+    itemId: itemId,
+    quantityChange: quantity,
+    quantityChangeTime: time,
+    itemPrice: price,
+    info: JSON.stringify(infoJson),
+  };
+  console.log('quantityChange', quantityChange);
+  try {
+    await DB('stockchangehistory').insert(quantityChange);
+  } catch (e) {
+    return {
+      status: 'failed',
+      msg: 'failed to create quantity change history ' + e,
+    };
+  }
+}

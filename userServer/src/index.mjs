@@ -11,6 +11,9 @@ import cors from 'koa-cors2';
 import users from './api/users/users';
 import email from './api/users/email';
 
+//stock
+import stock from './api/stock/stock';
+
 //DB
 // import { connection } from "./db/db";
 // connection.connect(function(err) {
@@ -48,8 +51,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(session(sessionConfig, app));
 
+//user
 users.api(router);
 email.api(router);
+//stock
+stock.api(router);
 
 app.use(async (ctx, next) => {
   try {

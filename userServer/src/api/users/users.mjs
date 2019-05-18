@@ -1,13 +1,6 @@
 import { requireAuth, logout, authenticateUser } from '../auth';
 import * as User from '../../models/User/User';
 
-async function getUser(ctx, next) {
-  const { userId } = ctx.params;
-  const user = await User.findUser({ userId });
-  ctx.state.user = user;
-  await next();
-}
-
 async function createUser(ctx, next) {
   const data = ctx.request.body;
   const result = await User.createUser(data);
@@ -19,6 +12,13 @@ async function createUser(ctx, next) {
     ctx.status = 422;
     ctx.body = result;
   }
+}
+
+async function getUser(ctx, next) {
+  const { userId } = ctx.params;
+  const user = await User.findUser({ userId });
+  ctx.state.user = user;
+  await next();
 }
 
 async function listUsers(ctx, next) {
@@ -52,9 +52,9 @@ async function outputUser(ctx) {
 }
 
 const api = router => {
+  router.post('/api/users', createUser, outputUser);
   router.get('/api/users/:userId', requireAuth('read'), getUser, outputUser);
   router.get('/api/users', requireAuth('read'), listUsers, outputUser);
-  router.post('/api/users', createUser, outputUser);
   router.put(
     '/api/users/:userId',
     requireAuth('update'),

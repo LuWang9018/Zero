@@ -4,6 +4,7 @@ import Home from 'containers/Home';
 import { authStatus, setUser } from 'modules/users';
 import SignIn from 'containers/SignIn';
 import SignUp from 'containers/SignUp';
+import UserHome from 'containers/UserHome';
 import PropTypes from 'prop-types';
 
 export default class App extends Component {
@@ -29,6 +30,7 @@ export default class App extends Component {
         <Switch>
           <Route exact path='/login' component={SignIn} />
           <Route exact path='/signup' component={SignUp} />
+          <Route exact path='/userHome' component={UserHome} />
           <Route exact path='*' component={Home} />
         </Switch>
       </div>

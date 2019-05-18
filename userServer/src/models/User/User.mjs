@@ -1,4 +1,4 @@
-import { userDB } from '../../db/db';
+import { DB } from '../../db/db';
 import uuidv4 from 'uuid/v4';
 import { passwordVerify, genHash } from '../Utils';
 
@@ -19,14 +19,16 @@ export async function createUser(attrs, options = {}) {
   };
   if (!userAttr.userId) userAttr.userId = uuidv4();
   try {
-    await userDB('user').insert(userAttr);
-    await userDB('email').insert({
+    await DB('user').insert(userAttr);
+    await DB('email').insert({
       emailId: uuidv4(),
       email: attrs.email,
       verified: 0,
       primary: 1,
       userID: userAttr.userId,
     });
+    delete userAttr.salt;
+    delete userAttr.hash;
     return { status: 'ok', user: userAttr };
   } catch (e) {
     return { status: 'failed', msg: 'failed to create new user ' };
@@ -40,7 +42,7 @@ export async function findByCredential(username, password) {
    *  TODO: email login....
    */
   const result = await new Promise(async (resolve, reject) => {
-    const user = await userDB('user')
+    const user = await DB('user')
       .select('*')
       .where({ username })
       .first();
@@ -57,7 +59,7 @@ export async function findByCredential(username, password) {
 export async function listUsers(query, options = {}) {
   console.log('list user query:', query);
   try {
-    const data = await userDB('userFull')
+    const data = await DB('userFull')
       .select('*')
       .where(query)
       .then(rows => {
@@ -71,7 +73,7 @@ export async function listUsers(query, options = {}) {
 }
 
 export async function findUser(query, options = {}) {
-  const data = await userDB('userFull')
+  const data = await DB('userFull')
     .select('*')
     .where(query)
     .first();
@@ -95,7 +97,7 @@ export async function updateUser(query, data, options = {}) {
   }
 
   try {
-    let result = await userDB('user')
+    let result = await DB('user')
       .where(query)
       .update(data)
       .then(result => {
@@ -109,12 +111,12 @@ export async function updateUser(query, data, options = {}) {
 
 export async function deleteUser(query, options = {}) {
   try {
-    let result = await userDB('email')
+    let result = await DB('email')
       .where(query)
       .del()
       .then(rows => {
         //console.log(rows);
-        userDB('user')
+        DB('user')
           .where(query)
           .del();
         return { status: 'ok', msg: 'delete success' };

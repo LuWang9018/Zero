@@ -1,7 +1,7 @@
 import mysql from 'mysql';
 import knex from 'knex';
 
-export const userDB = knex({
+export const DB = knex({
   client: 'mysql',
   connection: {
     host: 'localhost',

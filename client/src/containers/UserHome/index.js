@@ -25,7 +25,28 @@ import { getUser, logout } from '../../modules/users';
 import store from '../../store';
 
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    // Don't call this.setState() here!
+    this.state = {
+      showToast: false,
+      isLoading: false,
+      isDirty: false,
+      searchActive: false,
+      searchText: '',
+      userMenuOpen: false,
+      showMobileNavigation: false,
+      modalActive: false,
+      nameFieldValue: this.defaultState.nameFieldValue,
+      emailFieldValue: this.defaultState.emailFieldValue,
+      storeName: this.defaultState.nameFieldValue,
+      supportSubject: '',
+      supportMessage: '',
+    };
+  }
+
   defaultState = {
+    user: store.getState().user,
     emailFieldValue: 'dharma@jadedpixel.com',
     nameFieldValue: 'Jaded Pixel',
   };
@@ -33,22 +54,6 @@ class Home extends React.Component {
   static contextTypes = {
     router: PropTypes.object,
     store: PropTypes.object,
-  };
-
-  state = {
-    showToast: false,
-    isLoading: false,
-    isDirty: false,
-    searchActive: false,
-    searchText: '',
-    userMenuOpen: false,
-    showMobileNavigation: false,
-    modalActive: false,
-    nameFieldValue: this.defaultState.nameFieldValue,
-    emailFieldValue: this.defaultState.emailFieldValue,
-    storeName: this.defaultState.nameFieldValue,
-    supportSubject: '',
-    supportMessage: '',
   };
 
   logout = async () => {

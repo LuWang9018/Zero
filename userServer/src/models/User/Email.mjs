@@ -1,4 +1,4 @@
-import { userDB } from '../../db/db';
+import { DB } from '../../db/db';
 
 export async function updateEmail(query, data, options = {}) {
   if (data.name) {
@@ -12,7 +12,7 @@ export async function updateEmail(query, data, options = {}) {
   // console.log('query', query);
   // console.log('data', data);
   let result = await new Promise((resolve, reject) => {
-    userDB('email')
+    DB('email')
       .where(query)
       .update(data)
       .then(response => {
