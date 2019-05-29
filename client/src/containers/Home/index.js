@@ -196,7 +196,7 @@ class Home extends React.Component {
               label: 'Dashboard',
               icon: 'home',
               url: `/stock`,
-              onClick: this.toggleState('isLoading'),
+              //onClick: this.toggleState('isLoading'),
             },
             {
               label: 'Stock',
