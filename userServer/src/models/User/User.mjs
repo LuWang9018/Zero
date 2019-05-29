@@ -42,7 +42,7 @@ export async function findByCredential(username, password) {
    *  TODO: email login....
    */
   const result = await new Promise(async (resolve, reject) => {
-    const user = await DB('user')
+    const user = await DB('userFull')
       .select('*')
       .where({ username })
       .first();

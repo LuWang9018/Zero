@@ -1,3 +1,5 @@
+//https://polaris.shopify.com/components/navigation/navigation/sections/items
+
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from 'containers/Home';
@@ -29,11 +31,11 @@ export default class App extends Component {
     return (
       <div>
         <Switch>
-          <Route exact path='/login' component={SignIn} />
-          <Route exact path='/signup' component={SignUp} />
-          <Route exact path='/userHome' component={UserHome} />
-          <Route exact path='/userStock' component={UserStock} />
-          <Route exact path='*' component={Home} />
+          <Route exact path="/login" component={SignIn} />
+          <Route exact path="/signup" component={SignUp} />
+          <Route exact path="/userHome" component={UserHome} />
+          <Route exact path="/userStock" component={UserStock} />
+          <Route exact path="*" component={Home} />
         </Switch>
       </div>
     );
