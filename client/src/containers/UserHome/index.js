@@ -22,12 +22,13 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
-import store from '../../store';
-
+import { leftNavigation } from '../subContainers/leftNavigation';
 class Home extends React.Component {
-  constructor(props) {
+  constructor(props, context) {
     super(props);
-    // Don't call this.setState() here!
+
+    this.store = context.store;
+
     this.state = {
       showToast: false,
       isLoading: false,
@@ -37,19 +38,41 @@ class Home extends React.Component {
       userMenuOpen: false,
       showMobileNavigation: false,
       modalActive: false,
-      nameFieldValue: this.defaultState.nameFieldValue,
-      emailFieldValue: this.defaultState.emailFieldValue,
-      storeName: this.defaultState.nameFieldValue,
+      nameFieldValue: '',
+      emailFieldValue: '',
+      storeName: '',
       supportSubject: '',
       supportMessage: '',
     };
+
+    //if no user info
+    // if (!context.store.getState().users.user) {
+    //   context.router.history.push('/login');
+    // } else {
+    this.user = context.store.getState().users.user;
+    console.log('user', this.user);
+    if (this.user) {
+      this.state.nameFieldValue = this.user.username;
+      this.state.emailFieldValue = this.user.email;
+    }
+    //}
   }
 
-  defaultState = {
-    user: store.getState().user,
-    emailFieldValue: 'dharma@jadedpixel.com',
-    nameFieldValue: 'Jaded Pixel',
-  };
+  componentWillReceiveProps(nextProps, nextContext) {
+    //if no user info
+    if (!nextContext.store.getState().users.user) {
+      this.context.router.history.push('/login');
+    } else {
+      console.log('update');
+      console.log(nextContext.store.getState().users);
+      const userInfo = nextContext.store.getState().users.user;
+      console.log(userInfo);
+      this.setState({
+        nameFieldValue: userInfo.username,
+        emailFieldValue: userInfo.email,
+      });
+    }
+  }
 
   static contextTypes = {
     router: PropTypes.object,
@@ -64,7 +87,7 @@ class Home extends React.Component {
   };
 
   render() {
-    console.log('store', store.getState());
+    //console.log('store', this.context.store.getState());
     const {
       showToast,
       isLoading,
@@ -95,9 +118,9 @@ class Home extends React.Component {
     const navigationUserMenuMarkup = (
       <Navigation.UserMenu
         actions={userMenuActions}
-        name='Dharma'
+        name={nameFieldValue}
         detail={storeName}
-        avatarInitials='D'
+        avatarInitials={nameFieldValue.charAt(0).toUpperCase()}
       />
     );
 
@@ -116,9 +139,9 @@ class Home extends React.Component {
     const userMenuMarkup = (
       <TopBar.UserMenu
         actions={userMenuActions}
-        name='Dharma'
+        name={nameFieldValue}
         detail={storeName}
-        initials='D'
+        initials={nameFieldValue.charAt(0).toUpperCase()}
         open={userMenuOpen}
         onToggle={this.toggleState('userMenuOpen')}
       />
@@ -157,14 +180,14 @@ class Home extends React.Component {
 
     const navigationMarkup = (
       <Navigation location='/' userMenu={navigationUserMenuMarkup}>
-        {/* <Navigation.Section
+        <Navigation.Section
           items={[
             {
-              label: "Back to Shopify",
-              icon: "arrowLeft"
-            }
+              label: 'Back to Shopify',
+              icon: 'arrowLeft',
+            },
           ]}
-        /> */}
+        />
         <Navigation.Section
           separator
           title='Jaded Pixel App'
@@ -192,7 +215,7 @@ class Home extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title='Account'>
+      <Page title='Home'>
         <Layout>
           <Layout.AnnotatedSection
             title='Account details'

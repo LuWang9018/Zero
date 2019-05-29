@@ -22,8 +22,9 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
-import { leftNavigation } from '../subContainers/leftNavigation';
-class Home extends React.Component {
+import { getMyStock } from '../../modules/stock';
+
+class UserStock extends React.Component {
   constructor(props, context) {
     super(props);
 
@@ -46,21 +47,23 @@ class Home extends React.Component {
     };
 
     //if no user info
-    // if (!context.store.getState().users.user) {
-    //   context.router.history.push('/login');
-    // } else {
-    this.user = context.store.getState().users.user;
-    console.log('user', this.user);
-    if (this.user) {
+    if (!context.store.getState().users.user) {
+      console.log('user-------------');
+
+      context.router.history.push('/login');
+    } else {
+      this.user = context.store.getState().users.user;
+      console.log('user-------------', this.user);
+
       this.state.nameFieldValue = this.user.username;
       this.state.emailFieldValue = this.user.email;
     }
-    //}
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
     //if no user info
     if (!nextContext.store.getState().users.user) {
+      console.log('-------------update');
       this.context.router.history.push('/login');
     } else {
       console.log('update');
@@ -85,6 +88,10 @@ class Home extends React.Component {
     const { router } = this.context;
     router.history.push('/login');
   };
+
+  async componentDidMount() {
+    //await getMyStock(this.user.userId);
+  }
 
   render() {
     //console.log('store', this.context.store.getState());
@@ -215,7 +222,7 @@ class Home extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title='Home'>
+      <Page title='UserStock'>
         <Layout>
           <Layout.AnnotatedSection
             title='Account details'
@@ -394,4 +401,4 @@ export default connect(
     user: getUser(state),
   }),
   { logout }
-)(Home);
+)(UserStock);

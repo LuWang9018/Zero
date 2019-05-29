@@ -54,6 +54,7 @@ export async function listItems(query, options = {}) {
   }
 }
 
+//Given user id get all item under that user
 export async function getItems(query, options = {}) {
   const data = await DB('stock') //TODO: change that to stockFull
     .select('*')
@@ -61,6 +62,7 @@ export async function getItems(query, options = {}) {
   return data;
 }
 
+//Given item id get certain item
 export async function getItem(query, options = {}) {
   const data = await DB('stock') //TODO: change that to stockFull
     .select('*')
