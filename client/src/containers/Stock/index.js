@@ -18,18 +18,20 @@ import {
   Loading,
   Page,
   SkeletonPage,
+  ResourceList,
 } from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
-import { leftNavigation } from '../subContainers/leftNavigation';
-class Home extends React.Component {
+import { getMyStock } from '../../modules/stock';
+import { pruductList } from './productList';
+class Stock extends React.Component {
   constructor(props, context) {
     super(props);
-
     this.store = context.store;
-
-    this.state = {
+    this.myInfo = this.state = {
+      myInfo: this.store.getState().users,
+      myStocks: [],
       showToast: false,
       isLoading: false,
       isDirty: false,
@@ -44,34 +46,18 @@ class Home extends React.Component {
       supportSubject: '',
       supportMessage: '',
     };
-
-    //if no user info
-    // if (!context.store.getState().users.user) {
-    //   context.router.history.push('/login');
-    // } else {
-    this.user = context.store.getState().users.user;
-    console.log('user', this.user);
-    if (this.user) {
-      this.state.nameFieldValue = this.user.username;
-      this.state.emailFieldValue = this.user.email;
-    }
-    //}
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    //if no user info
-    if (!nextContext.store.getState().users.user) {
-      this.context.router.history.push('/login');
-    } else {
-      console.log('update');
-      console.log(nextContext.store.getState().users);
-      const userInfo = nextContext.store.getState().users.user;
-      console.log(userInfo);
-      this.setState({
-        nameFieldValue: userInfo.username,
-        emailFieldValue: userInfo.email,
-      });
-    }
+  async componentWillReceiveProps(nextProps, nextContext) {
+    // console.log('---------------update state');
+    // console.log(nextContext.store.getState().users);
+    const userInfo = nextContext.store.getState().users.user;
+    await this.setState({
+      myInfo: Object.assign({}, userInfo),
+      nameFieldValue: userInfo.username,
+      emailFieldValue: userInfo.email,
+    });
+    await this.updateStock();
   }
 
   static contextTypes = {
@@ -85,6 +71,13 @@ class Home extends React.Component {
     const { router } = this.context;
     router.history.push('/login');
   };
+
+  async updateStock() {
+    const result = await getMyStock(this.state.myInfo.userId);
+    await this.setState({ myStocks: result });
+  }
+
+  async componentDidMount() {}
 
   render() {
     //console.log('store', this.context.store.getState());
@@ -195,13 +188,11 @@ class Home extends React.Component {
             {
               label: 'Dashboard',
               icon: 'home',
-              //url: `/stock`,
               onClick: this.toggleState('isLoading'),
             },
             {
               label: 'Stock',
               icon: 'orders',
-              url: '/Stock',
               onClick: this.toggleState('isLoading'),
             },
           ]}
@@ -217,26 +208,18 @@ class Home extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title='Home'>
+      <Page title='Stock'>
         <Layout>
           <Layout.AnnotatedSection
             title='Account details'
             description='Jaded Pixel will use this as your account information.'
           >
             <Card sectioned>
-              <FormLayout>
-                <TextField
-                  label='Full name'
-                  value={nameFieldValue}
-                  onChange={this.handleNameFieldChange}
-                />
-                <TextField
-                  type='email'
-                  label='Email'
-                  value={emailFieldValue}
-                  onChange={this.handleEmailFieldChange}
-                />
-              </FormLayout>
+              <ResourceList
+                resourceName={{ singular: 'My item', plural: 'My items' }}
+                items={this.state.myStocks}
+                renderItem={pruductList}
+              />
             </Card>
           </Layout.AnnotatedSection>
         </Layout>
@@ -396,4 +379,4 @@ export default connect(
     user: getUser(state),
   }),
   { logout }
-)(Home);
+)(Stock);

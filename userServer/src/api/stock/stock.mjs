@@ -72,12 +72,6 @@ const api = router => {
     getItems,
     outputItem
   );
-  router.get(
-    '/api/stock/:itemId',
-    //requireAuth('read'),
-    getItem,
-    outputItem
-  );
   router.put(
     '/api/stock/:itemId',
     //requireAuth('update'),

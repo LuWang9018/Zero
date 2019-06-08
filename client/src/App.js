@@ -7,7 +7,8 @@ import { authStatus, setUser } from 'modules/users';
 import SignIn from 'containers/SignIn';
 import SignUp from 'containers/SignUp';
 import UserHome from 'containers/UserHome';
-import UserStock from 'containers/UserStock';
+import Stock from 'containers/Stock';
+import ProductDetail from 'containers/ProdectDetail';
 import PropTypes from 'prop-types';
 
 export default class App extends Component {
@@ -31,11 +32,12 @@ export default class App extends Component {
     return (
       <div>
         <Switch>
-          <Route exact path="/login" component={SignIn} />
-          <Route exact path="/signup" component={SignUp} />
-          <Route exact path="/userHome" component={UserHome} />
-          <Route exact path="/userStock" component={UserStock} />
-          <Route exact path="*" component={Home} />
+          <Route exact path='/login' component={SignIn} />
+          <Route exact path='/signup' component={SignUp} />
+          <Route exact path='/userHome' component={UserHome} />
+          <Route exact path='/stock' component={Stock} />
+          <Route exact path='/productDetail/*' component={ProductDetail} />
+          <Route exact path='*' component={Home} />
         </Switch>
       </div>
     );

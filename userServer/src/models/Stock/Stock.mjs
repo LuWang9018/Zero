@@ -54,20 +54,11 @@ export async function listItems(query, options = {}) {
   }
 }
 
-//Given user id get all item under that user
+//Given user id get his items
 export async function getItems(query, options = {}) {
   const data = await DB('stock') //TODO: change that to stockFull
     .select('*')
     .where(query);
-  return data;
-}
-
-//Given item id get certain item
-export async function getItem(query, options = {}) {
-  const data = await DB('stock') //TODO: change that to stockFull
-    .select('*')
-    .where(query)
-    .first();
   return data;
 }
 
