@@ -57,13 +57,13 @@ export async function findByCredential(username, password) {
 }
 
 export async function listUsers(query, options = {}) {
-  console.log('list user query:', query);
+  //console.log('list user query:', query);
   try {
     const data = await DB('userFull')
       .select('*')
       .where(query)
       .then(rows => {
-        console.log('rows', rows);
+        //console.log('rows', rows);
         return rows;
       });
     return data;

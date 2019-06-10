@@ -19,12 +19,16 @@ import {
   Page,
   SkeletonPage,
   ResourceList,
+  Button,
 } from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getUser, logout } from '../../modules/users';
-import { getMyStock } from '../../modules/stock';
-import { pruductList } from './productList';
+import { getUser, logout } from '../../../modules/users';
+import { getMyStocks } from '../../../modules/stock';
+import { genList } from './genList';
+import { LeftNavigation } from '../../SubContainers/LeftNavigation';
+import { AddProduct } from '../ProdectDetail/addProduct';
+
 class Stock extends React.Component {
   constructor(props, context) {
     super(props);
@@ -73,7 +77,7 @@ class Stock extends React.Component {
   };
 
   async updateStock() {
-    const result = await getMyStock(this.state.myInfo.userId);
+    const result = await getMyStocks(this.state.myInfo.userId);
     await this.setState({ myStocks: result });
   }
 
@@ -171,57 +175,23 @@ class Stock extends React.Component {
       />
     );
 
-    const navigationMarkup = (
-      <Navigation location='/' userMenu={navigationUserMenuMarkup}>
-        <Navigation.Section
-          items={[
-            {
-              label: 'Back to Shopify',
-              icon: 'arrowLeft',
-            },
-          ]}
-        />
-        <Navigation.Section
-          separator
-          title='Jaded Pixel App'
-          items={[
-            {
-              label: 'Dashboard',
-              icon: 'home',
-              onClick: this.toggleState('isLoading'),
-            },
-            {
-              label: 'Stock',
-              icon: 'orders',
-              onClick: this.toggleState('isLoading'),
-            },
-          ]}
-          action={{
-            icon: 'conversation',
-            accessibilityLabel: 'Contact support',
-            onClick: this.toggleState('modalActive'),
-          }}
-        />
-      </Navigation>
-    );
+    const navigationMarkup = <LeftNavigation toggleState={this.toggleState} />;
 
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
       <Page title='Stock'>
         <Layout>
-          <Layout.AnnotatedSection
-            title='Account details'
-            description='Jaded Pixel will use this as your account information.'
-          >
+          <Layout.Section>
+            <AddProduct action='ADD' ownerId={this.state.myInfo.userId} />
             <Card sectioned>
               <ResourceList
                 resourceName={{ singular: 'My item', plural: 'My items' }}
                 items={this.state.myStocks}
-                renderItem={pruductList}
+                renderItem={genList}
               />
             </Card>
-          </Layout.AnnotatedSection>
+          </Layout.Section>
         </Layout>
       </Page>
     );

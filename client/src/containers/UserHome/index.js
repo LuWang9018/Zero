@@ -22,7 +22,7 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
-import { leftNavigation } from '../subContainers/leftNavigation';
+import { LeftNavigation } from '../SubContainers/LeftNavigation';
 class Home extends React.Component {
   constructor(props, context) {
     super(props);

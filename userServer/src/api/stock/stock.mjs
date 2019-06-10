@@ -18,6 +18,7 @@ async function createItem(ctx, next) {
 
 async function listItems(ctx, next) {
   const query = ctx.request.query;
+  //console.log('=========', ctx.request);
   const stocks = await Stock.listItems(query);
   ctx.state.stock = stocks;
   await next();
@@ -37,10 +38,10 @@ async function getItem(ctx, next) {
   await next();
 }
 
-async function updateStock(ctx, next) {
+async function updateItem(ctx, next) {
   const data = ctx.request.body;
   const { itemId } = ctx.params;
-  const stocks = await Stock.updateStock({ itemId }, data);
+  const stocks = await Stock.updateItem({ itemId }, data);
   ctx.state.stock = stocks;
   await next();
 }
@@ -75,7 +76,7 @@ const api = router => {
   router.put(
     '/api/stock/:itemId',
     //requireAuth('update'),
-    updateStock,
+    updateItem,
     outputItem
   );
 };

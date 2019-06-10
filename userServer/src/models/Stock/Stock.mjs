@@ -5,7 +5,7 @@ import { listUsers } from '../User/User';
 
 export async function createItem(userId, attrs, options = {}) {
   const checkUser = await listUsers({ userId: userId });
-  if (checkUser.length == 0) {
+  if (checkUser.length === 0) {
     return {
       result: 0,
       msg: 'User does not exist',
@@ -15,9 +15,13 @@ export async function createItem(userId, attrs, options = {}) {
   let itemAttr = Object.assign({}, attrs);
   itemAttr.itemId = uuidv4();
   itemAttr.ownerId = userId;
-
+  //console.log('attrs', itemAttr);
   try {
-    await DB('stock').insert(itemAttr);
+    try {
+      await DB('stock').insert(itemAttr);
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
 
     if (itemAttr.itemCurrentPrice) {
       await changePrice(itemAttr.itemId, itemAttr.itemCurrentPrice);
@@ -39,13 +43,13 @@ export async function createItem(userId, attrs, options = {}) {
 }
 
 export async function listItems(query, options = {}) {
-  console.log('list item query:', query);
+  //console.log('list item query:', query);
   try {
     const data = await DB('stock') //TODO: change that to stockFull
       .select('*')
       .where(query)
       .then(rows => {
-        console.log('rows', rows);
+        //console.log('rows', rows);
         return rows;
       });
     return data;
@@ -62,7 +66,7 @@ export async function getItems(query, options = {}) {
   return data;
 }
 
-export async function updateStock(query, data, options = {}) {
+export async function updateItem(query, data, options = {}) {
   if (data.itemId) {
     delete data.itemId;
   }

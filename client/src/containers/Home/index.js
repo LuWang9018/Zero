@@ -22,7 +22,7 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
-import { leftNavigation } from '../subContainers/leftNavigation';
+import { LeftNavigation } from '../SubContainers/LeftNavigation';
 class Home extends React.Component {
   constructor(props, context) {
     super(props);
@@ -178,41 +178,7 @@ class Home extends React.Component {
       />
     );
 
-    const navigationMarkup = (
-      <Navigation location='/' userMenu={navigationUserMenuMarkup}>
-        <Navigation.Section
-          items={[
-            {
-              label: 'Back to Shopify',
-              icon: 'arrowLeft',
-            },
-          ]}
-        />
-        <Navigation.Section
-          separator
-          title='Jaded Pixel App'
-          items={[
-            {
-              label: 'Dashboard',
-              icon: 'home',
-              //url: `/stock`,
-              onClick: this.toggleState('isLoading'),
-            },
-            {
-              label: 'Stock',
-              icon: 'orders',
-              url: '/Stock',
-              onClick: this.toggleState('isLoading'),
-            },
-          ]}
-          action={{
-            icon: 'conversation',
-            accessibilityLabel: 'Contact support',
-            onClick: this.toggleState('modalActive'),
-          }}
-        />
-      </Navigation>
-    );
+    const navigationMarkup = <LeftNavigation toggleState={this.toggleState} />;
 
     const loadingMarkup = isLoading ? <Loading /> : null;
 

@@ -1,39 +1,10 @@
 import React from 'react';
-import {
-  Card,
-  ActionList,
-  TopBar,
-  Navigation,
-  Modal,
-  FormLayout,
-  TextField,
-  AppProvider,
-  SkeletonBodyText,
-  Layout,
-  TextContainer,
-  SkeletonDisplayText,
-  Frame,
-  Toast,
-  ContextualSaveBar,
-  Loading,
-  Page,
-  SkeletonPage,
-} from '@shopify/polaris';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Navigation } from '@shopify/polaris';
 
 export class LeftNavigation extends React.Component {
   render() {
     return (
-      <Navigation location='/' userMenu={this.props.navigationUserMenuMarkup}>
-        <Navigation.Section
-          items={[
-            {
-              label: 'Back to Shopify',
-              icon: 'arrowLeft',
-            },
-          ]}
-        />
+      <Navigation location='/'>
         <Navigation.Section
           separator
           title='Jaded Pixel App'
@@ -41,18 +12,20 @@ export class LeftNavigation extends React.Component {
             {
               label: 'Dashboard',
               icon: 'home',
-              onClick: this.toggleState('isLoading'),
+              url: `*`,
+              onClick: this.props.toggleState('isLoading'),
             },
             {
               label: 'Stock',
               icon: 'orders',
-              onClick: this.toggleState('isLoading'),
+              url: '/Stock',
+              onClick: this.props.toggleState('isLoading'),
             },
           ]}
           action={{
             icon: 'conversation',
             accessibilityLabel: 'Contact support',
-            onClick: this.toggleState('modalActive'),
+            onClick: this.props.toggleState('isLoading'),
           }}
         />
       </Navigation>

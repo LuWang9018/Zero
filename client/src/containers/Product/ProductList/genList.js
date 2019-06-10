@@ -24,10 +24,10 @@ import {
 } from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getUser, logout } from '../../modules/users';
-import { getMyStock } from '../../modules/stock';
+import { getUser, logout } from '../../../modules/users';
+import { getMyStocks } from '../../../modules/stock';
 
-export function pruductList(item) {
+export function genList(item) {
   {
     const { itemId, itemName, itemCode, itemCurrentPrice } = item;
     let imageUrl = item.imageUrl

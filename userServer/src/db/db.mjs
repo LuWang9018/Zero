@@ -4,10 +4,10 @@ import knex from 'knex';
 export const DB = knex({
   client: 'mysql',
   connection: {
-    host: 'localhost',
+    host: '35.193.247.29',
     user: 'root',
     password: 'wltc9018',
-    database: 'userdb',
+    database: 'userDB',
   },
   //pool: { min: 0, max: 10 }
 });

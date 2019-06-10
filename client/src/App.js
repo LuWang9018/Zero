@@ -4,11 +4,11 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from 'containers/Home';
 import { authStatus, setUser } from 'modules/users';
-import SignIn from 'containers/SignIn';
-import SignUp from 'containers/SignUp';
+import SignIn from 'containers/Account/SignIn';
+import SignUp from 'containers/Account/SignUp';
 import UserHome from 'containers/UserHome';
-import Stock from 'containers/Stock';
-import ProductDetail from 'containers/ProdectDetail';
+import Stock from 'containers/Product/ProductList';
+import ProductDetail from 'containers/Product/ProdectDetail';
 import PropTypes from 'prop-types';
 
 export default class App extends Component {

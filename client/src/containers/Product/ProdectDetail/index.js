@@ -18,20 +18,27 @@ import {
   Loading,
   Page,
   SkeletonPage,
-  ResourceList,
+  List,
 } from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getUser, logout } from '../../modules/users';
-import { getMyStock } from '../../modules/stock';
+import { getUser, logout } from '../../../modules/users';
+import { getMyStock } from '../../../modules/stock';
+import { LeftNavigation } from '../../SubContainers/LeftNavigation';
+import { imageNotFount } from '../../../utils/globals';
+import { AddProduct } from './addProduct';
 
 class ProductDetail extends React.Component {
   constructor(props, context) {
     super(props);
     this.store = context.store;
-    this.myInfo = this.state = {
+
+    let url = window.location.href;
+
+    let itemId = url.substring(url.lastIndexOf('/') + 1);
+    this.state = {
       myInfo: this.store.getState().users,
-      myStocks: [],
+      Product: { itemId },
       showToast: false,
       isLoading: false,
       isDirty: false,
@@ -49,8 +56,7 @@ class ProductDetail extends React.Component {
   }
 
   async componentWillReceiveProps(nextProps, nextContext) {
-    // console.log('---------------update state');
-    // console.log(nextContext.store.getState().users);
+    console.log(nextContext.store.getState().users);
     const userInfo = nextContext.store.getState().users.user;
     await this.setState({
       myInfo: Object.assign({}, userInfo),
@@ -58,6 +64,8 @@ class ProductDetail extends React.Component {
       emailFieldValue: userInfo.email,
     });
     await this.updateStock();
+
+    console.log(this.state);
   }
 
   static contextTypes = {
@@ -73,8 +81,8 @@ class ProductDetail extends React.Component {
   };
 
   async updateStock() {
-    const result = await getMyStock(this.state.myInfo.userId);
-    await this.setState({ myStocks: result });
+    const result = await getMyStock({ itemId: this.state.Product.itemId });
+    await this.setState({ Product: result[0] });
   }
 
   async componentDidMount() {}
@@ -171,58 +179,42 @@ class ProductDetail extends React.Component {
       />
     );
 
-    const navigationMarkup = (
-      <Navigation location='/' userMenu={navigationUserMenuMarkup}>
-        <Navigation.Section
-          items={[
-            {
-              label: 'Back to Shopify',
-              icon: 'arrowLeft',
-            },
-          ]}
-        />
-        <Navigation.Section
-          separator
-          title='Jaded Pixel App'
-          items={[
-            {
-              label: 'Dashboard',
-              icon: 'home',
-              onClick: this.toggleState('isLoading'),
-            },
-            {
-              label: 'Stock',
-              icon: 'orders',
-              onClick: this.toggleState('isLoading'),
-            },
-          ]}
-          action={{
-            icon: 'conversation',
-            accessibilityLabel: 'Contact support',
-            onClick: this.toggleState('modalActive'),
-          }}
-        />
-      </Navigation>
-    );
+    const navigationMarkup = <LeftNavigation toggleState={this.toggleState} />;
 
     const loadingMarkup = isLoading ? <Loading /> : null;
 
+    const productInfo = this.state.Product;
+
     const actualPageMarkup = (
-      <Page title='ProductDetail'>
-        <Layout>
-          <Layout.AnnotatedSection
-            title='Account details'
-            description='Jaded Pixel will use this as your account information.'
-          >
-            <Card sectioned>
-              {/* <ResourceList
-                resourceName={{ singular: 'My item', plural: 'My items' }}
-                items={this.state.myStocks}
-                renderItem={pruductList}
-              /> */}
-            </Card>
-          </Layout.AnnotatedSection>
-        </Layout>
+      <Page>
+        <Card>
+          <Layout>
+            <Layout.Section secondary>
+              <img
+                src={
+                  this.state.Product.imageUrl == null
+                    ? imageNotFount
+                    : this.state.Product.imageUrl
+                }
+                style={{ maxWidth: '100%' }}
+                alt='Cannot Load'
+              />
+            </Layout.Section>
+            <Layout.Section>
+              <Card title={productInfo.itemName} sectioned>
+                <Card.Section title='price'>
+                  <p>{productInfo.itemCurrentPrice} $</p>
+                </Card.Section>
+                <Card.Section title='Information'>
+                  <List>
+                    <List.Item>Code: {productInfo.itemCode}</List.Item>
+                  </List>
+                </Card.Section>
+              </Card>
+            </Layout.Section>
+          </Layout>
+        </Card>
+        <AddProduct action='EDIT' ownerId={this.state.myInfo.userId} />
       </Page>
     );
 
