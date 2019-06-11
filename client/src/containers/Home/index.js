@@ -23,6 +23,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
 import { LeftNavigation } from '../SubContainers/LeftNavigation';
+import { theme } from '../../utils/globals';
+
 class Home extends React.Component {
   constructor(props, context) {
     super(props);
@@ -253,23 +255,6 @@ class Home extends React.Component {
         </Modal.Section>
       </Modal>
     );
-
-    const theme = {
-      colors: {
-        topBar: {
-          background: '#357997',
-        },
-      },
-      logo: {
-        width: 124,
-        topBarSource:
-          'https://cdn.shopify.com/s/files/1/0446/6937/files/jaded-pixel-logo-color.svg?6215648040070010999',
-        contextualSaveBarSource:
-          'https://cdn.shopify.com/s/files/1/0446/6937/files/jaded-pixel-logo-gray.svg?6215648040070010999',
-        url: 'http://jadedpixel.com',
-        accessibilityLabel: 'Jaded Pixel',
-      },
-    };
 
     return (
       <div style={{ height: '500px' }}>

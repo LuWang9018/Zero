@@ -27,6 +27,7 @@ import { getMyStock } from '../../../modules/stock';
 import { LeftNavigation } from '../../SubContainers/LeftNavigation';
 import { imageNotFount } from '../../../utils/globals';
 import { AddProduct } from './addProduct';
+import { theme } from '../../../utils/globals';
 
 class ProductDetail extends React.Component {
   constructor(props, context) {
@@ -262,23 +263,6 @@ class ProductDetail extends React.Component {
         </Modal.Section>
       </Modal>
     );
-
-    const theme = {
-      colors: {
-        topBar: {
-          background: '#357997',
-        },
-      },
-      logo: {
-        width: 124,
-        topBarSource:
-          'https://cdn.shopify.com/s/files/1/0446/6937/files/jaded-pixel-logo-color.svg?6215648040070010999',
-        contextualSaveBarSource:
-          'https://cdn.shopify.com/s/files/1/0446/6937/files/jaded-pixel-logo-gray.svg?6215648040070010999',
-        url: 'http://jadedpixel.com',
-        accessibilityLabel: 'Jaded Pixel',
-      },
-    };
 
     return (
       <div style={{ height: '500px' }}>
