@@ -46,6 +46,14 @@ async function updateItem(ctx, next) {
   await next();
 }
 
+async function updateItemQuantity(ctx, next) {
+  const data = ctx.request.body;
+  const { itemId } = ctx.params;
+  const stocks = await Stock.changeQuantity({ itemId }, data);
+  ctx.state.stock = stocks;
+  await next();
+}
+
 //price history
 
 //output
@@ -77,6 +85,12 @@ const api = router => {
     '/api/stock/:itemId',
     //requireAuth('update'),
     updateItem,
+    outputItem
+  );
+  router.put(
+    '/api/stock/:itemId/quantity',
+    //requireAuth('update'),
+    updateItemQuantity,
     outputItem
   );
 };

@@ -24,7 +24,7 @@ export const callApi = async (url, method, options = {}) => {
     fetchOptions.headers = options.headers;
   }
   if (options.body) {
-    console.log('body', options.body);
+    //console.log('body', options.body);
     fetchOptions.body = options.body;
   }
   if (options.query) {

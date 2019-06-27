@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { TopBar, AppProvider, Frame } from '@shopify/polaris';
 import { connect } from 'react-redux';
-import { authenticate, createNewUser, getUser } from 'modules/users';
+import { authenticate, getUser } from 'modules/users';
 import SiginForm from 'components/SignInForm';
 import PropTypes from 'prop-types';
 import { theme } from '../../../utils/globals';

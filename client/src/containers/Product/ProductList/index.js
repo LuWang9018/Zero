@@ -1,9 +1,6 @@
 import React from 'react';
 import {
   Card,
-  ActionList,
-  TopBar,
-  Navigation,
   Modal,
   FormLayout,
   TextField,
@@ -19,7 +16,6 @@ import {
   Page,
   SkeletonPage,
   ResourceList,
-  Button,
 } from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -27,48 +23,43 @@ import { getUser, logout } from '../../../modules/users';
 import { getMyStocks } from '../../../modules/stock';
 import { genList } from './genList';
 import { LeftNavigation } from '../../SubContainers/LeftNavigation';
+import { MyTopBar } from '../../SubContainers/TopBar';
+
 import { AddProduct } from '../ProdectDetail/addProduct';
 import { theme } from '../../../utils/globals';
 
 class Stock extends React.Component {
-  constructor(props, context) {
-    super(props);
-    this.store = context.store;
-    this.myInfo = this.state = {
-      myInfo: this.store.getState().users,
-      myStocks: [],
-      showToast: false,
-      isLoading: false,
-      isDirty: false,
-      searchActive: false,
-      searchText: '',
-      userMenuOpen: false,
-      showMobileNavigation: false,
-      modalActive: false,
-      nameFieldValue: '',
-      emailFieldValue: '',
-      storeName: '',
-      supportSubject: '',
-      supportMessage: '',
-    };
-  }
-
-  async componentWillReceiveProps(nextProps, nextContext) {
-    // console.log('---------------update state');
-    // console.log(nextContext.store.getState().users);
-    const userInfo = nextContext.store.getState().users.user;
-    await this.setState({
-      myInfo: Object.assign({}, userInfo),
-      nameFieldValue: userInfo.username,
-      emailFieldValue: userInfo.email,
-    });
-    await this.updateStock();
-  }
-
   static contextTypes = {
     router: PropTypes.object,
     store: PropTypes.object,
   };
+
+  constructor(props, context) {
+    super(props);
+    this.store = context.store;
+
+    this.state = {
+      myStocks: [],
+      isLoading: false,
+      searchActive: false,
+      showMobileNavigation: false,
+      modalActive: false,
+    };
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (this.props !== prevProps) {
+      //console.log('Product List update');
+      const userInfo = this.store.getState().users.user;
+      //console.log('Product List update', userInfo);
+      await this.setState({
+        userInfo: userInfo,
+      });
+      if (userInfo.userId) {
+        await this.updateStock();
+      }
+    }
+  }
 
   logout = async () => {
     const { logout } = this.props;
@@ -78,7 +69,8 @@ class Stock extends React.Component {
   };
 
   async updateStock() {
-    const result = await getMyStocks(this.state.myInfo.userId);
+    console.log('user list:', this.state.userInfo);
+    const result = await getMyStocks(this.state.userInfo.userId);
     await this.setState({ myStocks: result });
   }
 
@@ -90,14 +82,8 @@ class Stock extends React.Component {
       showToast,
       isLoading,
       isDirty,
-      searchActive,
-      searchText,
-      userMenuOpen,
       showMobileNavigation,
-      nameFieldValue,
-      emailFieldValue,
       modalActive,
-      storeName,
     } = this.state;
 
     const toastMarkup = showToast ? (
@@ -106,21 +92,6 @@ class Stock extends React.Component {
         content='Changes saved'
       />
     ) : null;
-
-    const userMenuActions = [
-      {
-        items: [{ content: 'Sign Out', onAction: this.logout }],
-      },
-    ];
-
-    const navigationUserMenuMarkup = (
-      <Navigation.UserMenu
-        actions={userMenuActions}
-        name={nameFieldValue}
-        detail={storeName}
-        avatarInitials={nameFieldValue.charAt(0).toUpperCase()}
-      />
-    );
 
     const contextualSaveBarMarkup = isDirty ? (
       <ContextualSaveBar
@@ -134,47 +105,7 @@ class Stock extends React.Component {
       />
     ) : null;
 
-    const userMenuMarkup = (
-      <TopBar.UserMenu
-        actions={userMenuActions}
-        name={nameFieldValue}
-        detail={storeName}
-        initials={nameFieldValue.charAt(0).toUpperCase()}
-        open={userMenuOpen}
-        onToggle={this.toggleState('userMenuOpen')}
-      />
-    );
-
-    const searchResultsMarkup = (
-      <Card>
-        <ActionList
-          items={[
-            { content: 'Shopify help center' },
-            { content: 'Community forums' },
-          ]}
-        />
-      </Card>
-    );
-
-    const searchFieldMarkup = (
-      <TopBar.SearchField
-        onChange={this.handleSearchFieldChange}
-        value={searchText}
-        placeholder='Search'
-      />
-    );
-
-    const topBarMarkup = (
-      <TopBar
-        showNavigationToggle={true}
-        userMenu={userMenuMarkup}
-        searchResultsVisible={searchActive}
-        searchField={searchFieldMarkup}
-        searchResults={searchResultsMarkup}
-        onSearchResultsDismiss={this.handleSearchResultsDismiss}
-        onNavigationToggle={this.toggleState('showMobileNavigation')}
-      />
-    );
+    const topBarMarkup = <MyTopBar logout={this.props.logout} />;
 
     const navigationMarkup = <LeftNavigation toggleState={this.toggleState} />;
 
@@ -184,7 +115,15 @@ class Stock extends React.Component {
       <Page title='Stock'>
         <Layout>
           <Layout.Section>
-            <AddProduct action='ADD' ownerId={this.state.myInfo.userId} />
+            <AddProduct
+              action='ADD'
+              ownerId={
+                this.state.userInfo ? this.state.userInfo.userId : undefined
+              }
+              callBack={() => {
+                this.updateStock();
+              }}
+            />
             <Card sectioned>
               <ResourceList
                 resourceName={{ singular: 'My item', plural: 'My items' }}
@@ -266,65 +205,6 @@ class Stock extends React.Component {
     return () => {
       this.setState(prevState => ({ [key]: !prevState[key] }));
     };
-  };
-
-  handleSearchFieldChange = value => {
-    this.setState({ searchText: value });
-    if (value.length > 0) {
-      this.setState({ searchActive: true });
-    } else {
-      this.setState({ searchActive: false });
-    }
-  };
-
-  handleSearchResultsDismiss = () => {
-    this.setState(() => {
-      return {
-        searchActive: false,
-        searchText: '',
-      };
-    });
-  };
-
-  handleEmailFieldChange = emailFieldValue => {
-    this.setState({ emailFieldValue });
-    if (emailFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleNameFieldChange = nameFieldValue => {
-    this.setState({ nameFieldValue });
-    if (nameFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleSave = () => {
-    this.defaultState.nameFieldValue = this.state.nameFieldValue;
-    this.defaultState.emailFieldValue = this.state.emailFieldValue;
-
-    this.setState({
-      isDirty: false,
-      showToast: true,
-      storeName: this.defaultState.nameFieldValue,
-    });
-  };
-
-  handleDiscard = () => {
-    this.setState({
-      emailFieldValue: this.defaultState.emailFieldValue,
-      nameFieldValue: this.defaultState.nameFieldValue,
-      isDirty: false,
-    });
-  };
-
-  handleSubjectChange = supportSubject => {
-    this.setState({ supportSubject });
-  };
-
-  handleMessageChange = supportMessage => {
-    this.setState({ supportMessage });
   };
 }
 

@@ -7,8 +7,8 @@ format {
 }
 */
 export function inputCheck(format, data, option = {}) {
-  console.log('format', format);
-  console.log('data', data);
+  // console.log('format', format);
+  // console.log('data', data);
 
   switch (format.type) {
     case 'string':
@@ -32,7 +32,8 @@ export function inputCheck(format, data, option = {}) {
         };
       }
       let number = Number(data);
-      if (String(number) !== data) {
+      if (String(number) !== String(data)) {
+        console.log('string number:', String(number), 'data:', data);
         return {
           status: 'Fail',
           msg: 'Number Only',
@@ -49,8 +50,28 @@ export function inputCheck(format, data, option = {}) {
         data: Number(data),
       };
     case 'image':
-      //TODO
-      break;
+      //todo
+      return {
+        status: 'OK',
+        data: data,
+      };
+    case 'currency':
+      if (format.notNull && !data) {
+        return {
+          status: 'Fail',
+          msg: 'Field cannot be empty',
+        };
+      }
+      if (number > format.max || number < format.min) {
+        return {
+          status: 'Fail',
+          msg: 'Price out of range',
+        };
+      }
+      return {
+        status: 'OK',
+        data: Number(data),
+      };
     default:
       return {
         status: 'Fail',

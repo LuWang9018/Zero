@@ -1,20 +1,12 @@
 import React from 'react';
 import {
   Card,
-  ActionList,
-  TopBar,
-  Navigation,
-  Modal,
-  FormLayout,
-  TextField,
   AppProvider,
   SkeletonBodyText,
   Layout,
   TextContainer,
   SkeletonDisplayText,
   Frame,
-  Toast,
-  ContextualSaveBar,
   Loading,
   Page,
   SkeletonPage,
@@ -25,11 +17,20 @@ import { connect } from 'react-redux';
 import { getUser, logout } from '../../../modules/users';
 import { getMyStock } from '../../../modules/stock';
 import { LeftNavigation } from '../../SubContainers/LeftNavigation';
+import { MyTopBar } from '../../SubContainers/TopBar';
 import { imageNotFount } from '../../../utils/globals';
 import { AddProduct } from './addProduct';
 import { theme } from '../../../utils/globals';
+import { ChangeStock } from './changStock';
+import { ChangePrice } from './changPrice';
+import * as victory from 'victory';
 
 class ProductDetail extends React.Component {
+  static contextTypes = {
+    router: PropTypes.object,
+    store: PropTypes.object,
+  };
+
   constructor(props, context) {
     super(props);
     this.store = context.store;
@@ -37,8 +38,8 @@ class ProductDetail extends React.Component {
     let url = window.location.href;
 
     let itemId = url.substring(url.lastIndexOf('/') + 1);
+
     this.state = {
-      myInfo: this.store.getState().users,
       Product: { itemId },
       showToast: false,
       isLoading: false,
@@ -48,25 +49,23 @@ class ProductDetail extends React.Component {
       userMenuOpen: false,
       showMobileNavigation: false,
       modalActive: false,
-      nameFieldValue: '',
-      emailFieldValue: '',
       storeName: '',
       supportSubject: '',
       supportMessage: '',
     };
   }
 
-  async componentWillReceiveProps(nextProps, nextContext) {
-    console.log(nextContext.store.getState().users);
-    const userInfo = nextContext.store.getState().users.user;
-    await this.setState({
-      myInfo: Object.assign({}, userInfo),
-      nameFieldValue: userInfo.username,
-      emailFieldValue: userInfo.email,
-    });
-    await this.updateStock();
+  async componentDidUpdate(prevProps) {
+    if (prevProps !== this.props && this.store) {
+      //console.log('Product Detail', this.store.getState().users);
+      const userInfo = this.store.getState().users.user;
+      await this.setState({
+        userInfo: userInfo,
+      });
+      await this.updateStock();
 
-    console.log(this.state);
+      //console.log('Product Detail index state:', this.state);
+    }
   }
 
   static contextTypes = {
@@ -90,95 +89,9 @@ class ProductDetail extends React.Component {
 
   render() {
     //console.log('store', this.context.store.getState());
-    const {
-      showToast,
-      isLoading,
-      isDirty,
-      searchActive,
-      searchText,
-      userMenuOpen,
-      showMobileNavigation,
-      nameFieldValue,
-      emailFieldValue,
-      modalActive,
-      storeName,
-    } = this.state;
+    const { isLoading, showMobileNavigation } = this.state;
 
-    const toastMarkup = showToast ? (
-      <Toast
-        onDismiss={this.toggleState('showToast')}
-        content='Changes saved'
-      />
-    ) : null;
-
-    const userMenuActions = [
-      {
-        items: [{ content: 'Sign Out', onAction: this.logout }],
-      },
-    ];
-
-    const navigationUserMenuMarkup = (
-      <Navigation.UserMenu
-        actions={userMenuActions}
-        name={nameFieldValue}
-        detail={storeName}
-        avatarInitials={nameFieldValue.charAt(0).toUpperCase()}
-      />
-    );
-
-    const contextualSaveBarMarkup = isDirty ? (
-      <ContextualSaveBar
-        message='Unsaved changes'
-        saveAction={{
-          onAction: this.handleSave,
-        }}
-        discardAction={{
-          onAction: this.handleDiscard,
-        }}
-      />
-    ) : null;
-
-    const userMenuMarkup = (
-      <TopBar.UserMenu
-        actions={userMenuActions}
-        name={nameFieldValue}
-        detail={storeName}
-        initials={nameFieldValue.charAt(0).toUpperCase()}
-        open={userMenuOpen}
-        onToggle={this.toggleState('userMenuOpen')}
-      />
-    );
-
-    const searchResultsMarkup = (
-      <Card>
-        <ActionList
-          items={[
-            { content: 'Shopify help center' },
-            { content: 'Community forums' },
-          ]}
-        />
-      </Card>
-    );
-
-    const searchFieldMarkup = (
-      <TopBar.SearchField
-        onChange={this.handleSearchFieldChange}
-        value={searchText}
-        placeholder='Search'
-      />
-    );
-
-    const topBarMarkup = (
-      <TopBar
-        showNavigationToggle={true}
-        userMenu={userMenuMarkup}
-        searchResultsVisible={searchActive}
-        searchField={searchFieldMarkup}
-        searchResults={searchResultsMarkup}
-        onSearchResultsDismiss={this.handleSearchResultsDismiss}
-        onNavigationToggle={this.toggleState('showMobileNavigation')}
-      />
-    );
+    const topBarMarkup = <MyTopBar logout={this.props.logout} />;
 
     const navigationMarkup = <LeftNavigation toggleState={this.toggleState} />;
 
@@ -186,6 +99,46 @@ class ProductDetail extends React.Component {
 
     const productInfo = this.state.Product;
 
+    const addProduct = this.state.userInfo ? (
+      <AddProduct
+        action='EDIT'
+        userInfo={this.state.userInfo}
+        productInfo={productInfo}
+        callBack={() => {
+          this.updateStock();
+        }}
+      />
+    ) : null;
+
+    const changeStock = this.state.userInfo ? (
+      <ChangeStock
+        action='EDIT'
+        userInfo={this.state.userInfo}
+        productInfo={productInfo}
+        callBack={() => {
+          this.updateStock();
+        }}
+      />
+    ) : null;
+
+    const changePrice = this.state.userInfo ? (
+      <ChangePrice
+        action='EDIT'
+        userInfo={this.state.userInfo}
+        productInfo={productInfo}
+        callBack={() => {
+          this.updateStock();
+        }}
+      />
+    ) : null;
+
+    const stockData = [
+      {quarter: 1, earnings: 13000},
+      {quarter: 2, earnings: 16500},
+      {quarter: 3, earnings: 14250},
+      {quarter: 4, earnings: 19000}
+    ];
+    const stockGraph = ();
     const actualPageMarkup = (
       <Page>
         <Card>
@@ -209,13 +162,16 @@ class ProductDetail extends React.Component {
                 <Card.Section title='Information'>
                   <List>
                     <List.Item>Code: {productInfo.itemCode}</List.Item>
+                    <List.Item>Stock: {productInfo.itemStock}</List.Item>
                   </List>
                 </Card.Section>
               </Card>
             </Layout.Section>
           </Layout>
         </Card>
-        <AddProduct action='EDIT' ownerId={this.state.myInfo.userId} />
+        {addProduct}
+        {changeStock}
+        {changePrice}
       </Page>
     );
 
@@ -236,34 +192,6 @@ class ProductDetail extends React.Component {
 
     const pageMarkup = isLoading ? loadingPageMarkup : actualPageMarkup;
 
-    const modalMarkup = (
-      <Modal
-        open={modalActive}
-        onClose={this.toggleState('modalActive')}
-        title='Contact support'
-        primaryAction={{
-          content: 'Send',
-          onAction: this.toggleState('modalActive'),
-        }}
-      >
-        <Modal.Section>
-          <FormLayout>
-            <TextField
-              label='Subject'
-              value={this.state.supportSubject}
-              onChange={this.handleSubjectChange}
-            />
-            <TextField
-              label='Message'
-              value={this.state.supportMessage}
-              onChange={this.handleMessageChange}
-              multiline
-            />
-          </FormLayout>
-        </Modal.Section>
-      </Modal>
-    );
-
     return (
       <div style={{ height: '500px' }}>
         <AppProvider theme={theme}>
@@ -273,11 +201,8 @@ class ProductDetail extends React.Component {
             showMobileNavigation={showMobileNavigation}
             onNavigationDismiss={this.toggleState('showMobileNavigation')}
           >
-            {contextualSaveBarMarkup}
             {loadingMarkup}
             {pageMarkup}
-            {toastMarkup}
-            {modalMarkup}
           </Frame>
         </AppProvider>
       </div>
@@ -305,39 +230,6 @@ class ProductDetail extends React.Component {
         searchActive: false,
         searchText: '',
       };
-    });
-  };
-
-  handleEmailFieldChange = emailFieldValue => {
-    this.setState({ emailFieldValue });
-    if (emailFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleNameFieldChange = nameFieldValue => {
-    this.setState({ nameFieldValue });
-    if (nameFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleSave = () => {
-    this.defaultState.nameFieldValue = this.state.nameFieldValue;
-    this.defaultState.emailFieldValue = this.state.emailFieldValue;
-
-    this.setState({
-      isDirty: false,
-      showToast: true,
-      storeName: this.defaultState.nameFieldValue,
-    });
-  };
-
-  handleDiscard = () => {
-    this.setState({
-      emailFieldValue: this.defaultState.emailFieldValue,
-      nameFieldValue: this.defaultState.nameFieldValue,
-      isDirty: false,
     });
   };
 

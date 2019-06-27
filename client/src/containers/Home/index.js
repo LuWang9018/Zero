@@ -1,9 +1,6 @@
 import React from 'react';
 import {
   Card,
-  ActionList,
-  TopBar,
-  Navigation,
   Modal,
   FormLayout,
   TextField,
@@ -13,8 +10,6 @@ import {
   TextContainer,
   SkeletonDisplayText,
   Frame,
-  Toast,
-  ContextualSaveBar,
   Loading,
   Page,
   SkeletonPage,
@@ -23,9 +18,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
 import { LeftNavigation } from '../SubContainers/LeftNavigation';
+import { MyTopBar } from '../SubContainers/TopBar';
+
 import { theme } from '../../utils/globals';
 
 class Home extends React.Component {
+  static contextTypes = {
+    router: PropTypes.object,
+    store: PropTypes.object,
+  };
+
   constructor(props, context) {
     super(props);
 
@@ -34,151 +36,36 @@ class Home extends React.Component {
     this.state = {
       showToast: false,
       isLoading: false,
-      isDirty: false,
       searchActive: false,
-      searchText: '',
       userMenuOpen: false,
       showMobileNavigation: false,
       modalActive: false,
-      nameFieldValue: '',
-      emailFieldValue: '',
-      storeName: '',
-      supportSubject: '',
-      supportMessage: '',
     };
-
-    //if no user info
-    // if (!context.store.getState().users.user) {
-    //   context.router.history.push('/login');
-    // } else {
-    this.user = context.store.getState().users.user;
-    console.log('user', this.user);
-    if (this.user) {
-      this.state.nameFieldValue = this.user.username;
-      this.state.emailFieldValue = this.user.email;
-    }
-    //}
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
+  componentDidUpdate(prevProps) {
     //if no user info
-    if (!nextContext.store.getState().users.user) {
-      this.context.router.history.push('/login');
-    } else {
-      console.log('update');
-      console.log(nextContext.store.getState().users);
-      const userInfo = nextContext.store.getState().users.user;
-      console.log(userInfo);
+    if (this.props !== prevProps && this.store) {
+      //console.log('Home update');
+      const userInfo = this.store.getState().users.user;
+      //console.log(userInfo);
       this.setState({
-        nameFieldValue: userInfo.username,
-        emailFieldValue: userInfo.email,
+        userInfo: userInfo,
       });
     }
   }
 
-  static contextTypes = {
-    router: PropTypes.object,
-    store: PropTypes.object,
-  };
-
-  logout = async () => {
-    const { logout } = this.props;
-    await logout();
-    const { router } = this.context;
-    router.history.push('/login');
-  };
-
   render() {
     //console.log('store', this.context.store.getState());
     const {
-      showToast,
       isLoading,
-      isDirty,
-      searchActive,
-      searchText,
-      userMenuOpen,
       showMobileNavigation,
       nameFieldValue,
       emailFieldValue,
       modalActive,
-      storeName,
     } = this.state;
 
-    const toastMarkup = showToast ? (
-      <Toast
-        onDismiss={this.toggleState('showToast')}
-        content='Changes saved'
-      />
-    ) : null;
-
-    const userMenuActions = [
-      {
-        items: [{ content: 'Sign Out', onAction: this.logout }],
-      },
-    ];
-
-    const navigationUserMenuMarkup = (
-      <Navigation.UserMenu
-        actions={userMenuActions}
-        name={nameFieldValue}
-        detail={storeName}
-        avatarInitials={nameFieldValue.charAt(0).toUpperCase()}
-      />
-    );
-
-    const contextualSaveBarMarkup = isDirty ? (
-      <ContextualSaveBar
-        message='Unsaved changes'
-        saveAction={{
-          onAction: this.handleSave,
-        }}
-        discardAction={{
-          onAction: this.handleDiscard,
-        }}
-      />
-    ) : null;
-
-    const userMenuMarkup = (
-      <TopBar.UserMenu
-        actions={userMenuActions}
-        name={nameFieldValue}
-        detail={storeName}
-        initials={nameFieldValue.charAt(0).toUpperCase()}
-        open={userMenuOpen}
-        onToggle={this.toggleState('userMenuOpen')}
-      />
-    );
-
-    const searchResultsMarkup = (
-      <Card>
-        <ActionList
-          items={[
-            { content: 'Shopify help center' },
-            { content: 'Community forums' },
-          ]}
-        />
-      </Card>
-    );
-
-    const searchFieldMarkup = (
-      <TopBar.SearchField
-        onChange={this.handleSearchFieldChange}
-        value={searchText}
-        placeholder='Search'
-      />
-    );
-
-    const topBarMarkup = (
-      <TopBar
-        showNavigationToggle={true}
-        userMenu={userMenuMarkup}
-        searchResultsVisible={searchActive}
-        searchField={searchFieldMarkup}
-        searchResults={searchResultsMarkup}
-        onSearchResultsDismiss={this.handleSearchResultsDismiss}
-        onNavigationToggle={this.toggleState('showMobileNavigation')}
-      />
-    );
+    const topBarMarkup = <MyTopBar logout={this.props.logout} />;
 
     const navigationMarkup = <LeftNavigation toggleState={this.toggleState} />;
 
@@ -265,10 +152,8 @@ class Home extends React.Component {
             showMobileNavigation={showMobileNavigation}
             onNavigationDismiss={this.toggleState('showMobileNavigation')}
           >
-            {contextualSaveBarMarkup}
             {loadingMarkup}
             {pageMarkup}
-            {toastMarkup}
             {modalMarkup}
           </Frame>
         </AppProvider>
@@ -280,65 +165,6 @@ class Home extends React.Component {
     return () => {
       this.setState(prevState => ({ [key]: !prevState[key] }));
     };
-  };
-
-  handleSearchFieldChange = value => {
-    this.setState({ searchText: value });
-    if (value.length > 0) {
-      this.setState({ searchActive: true });
-    } else {
-      this.setState({ searchActive: false });
-    }
-  };
-
-  handleSearchResultsDismiss = () => {
-    this.setState(() => {
-      return {
-        searchActive: false,
-        searchText: '',
-      };
-    });
-  };
-
-  handleEmailFieldChange = emailFieldValue => {
-    this.setState({ emailFieldValue });
-    if (emailFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleNameFieldChange = nameFieldValue => {
-    this.setState({ nameFieldValue });
-    if (nameFieldValue != '') {
-      this.setState({ isDirty: true });
-    }
-  };
-
-  handleSave = () => {
-    this.defaultState.nameFieldValue = this.state.nameFieldValue;
-    this.defaultState.emailFieldValue = this.state.emailFieldValue;
-
-    this.setState({
-      isDirty: false,
-      showToast: true,
-      storeName: this.defaultState.nameFieldValue,
-    });
-  };
-
-  handleDiscard = () => {
-    this.setState({
-      emailFieldValue: this.defaultState.emailFieldValue,
-      nameFieldValue: this.defaultState.nameFieldValue,
-      isDirty: false,
-    });
-  };
-
-  handleSubjectChange = supportSubject => {
-    this.setState({ supportSubject });
-  };
-
-  handleMessageChange = supportMessage => {
-    this.setState({ supportMessage });
   };
 }
 

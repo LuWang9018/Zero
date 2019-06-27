@@ -1,35 +1,9 @@
 import React from 'react';
-import {
-  Card,
-  ActionList,
-  TopBar,
-  Navigation,
-  Modal,
-  FormLayout,
-  TextField,
-  AppProvider,
-  SkeletonBodyText,
-  Layout,
-  TextContainer,
-  SkeletonDisplayText,
-  Frame,
-  Toast,
-  ContextualSaveBar,
-  Loading,
-  Page,
-  SkeletonPage,
-  ResourceList,
-  TextStyle,
-  Thumbnail,
-} from '@shopify/polaris';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { getUser, logout } from '../../../modules/users';
-import { getMyStocks } from '../../../modules/stock';
+import { ResourceList, TextStyle, Thumbnail } from '@shopify/polaris';
 
 export function genList(item) {
   {
-    const { itemId, itemName, itemCode, itemCurrentPrice } = item;
+    const { itemId, itemName, itemCode, itemCurrentPrice, itemStock } = item;
     let imageUrl = item.imageUrl
       ? item.imageUrl
       : 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/600px-No_image_available_600_x_450.svg.png';
@@ -49,6 +23,7 @@ export function genList(item) {
         </h3>
         <div>{itemCode}</div>
         <div>{itemCurrentPrice}</div>
+        <div>{itemStock}</div>
       </ResourceList.Item>
     );
   }

@@ -14,6 +14,9 @@ import email from './api/users/email';
 //stock
 import stock from './api/stock/stock';
 
+//price
+import price from './api/stock/price';
+
 //DB
 // import { connection } from "./db/db";
 // connection.connect(function(err) {
@@ -44,7 +47,7 @@ app.use(cors({ credentials: true }));
 app.keys = ['zero'];
 const sessionConfig = {
   key: 'zero',
-  maxAge: 604800,
+  maxAge: 604800000,
   signed: true,
 };
 app.use(passport.initialize());
@@ -56,6 +59,8 @@ users.api(router);
 email.api(router);
 //stock
 stock.api(router);
+//price
+price.api(router);
 
 app.use(async (ctx, next) => {
   try {

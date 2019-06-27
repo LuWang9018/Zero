@@ -1,5 +1,5 @@
 import { DB } from '../../db/db';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 
 import { listUsers } from '../User/User';
 
@@ -12,8 +12,9 @@ export async function createItem(userId, attrs, options = {}) {
     };
   }
 
+  let today = Date.now();
   let itemAttr = Object.assign({}, attrs);
-  itemAttr.itemId = uuidv4();
+  itemAttr.itemId = uuid();
   itemAttr.ownerId = userId;
   //console.log('attrs', itemAttr);
   try {
@@ -23,18 +24,19 @@ export async function createItem(userId, attrs, options = {}) {
       console.log('ERROR:', err);
     }
 
-    if (itemAttr.itemCurrentPrice) {
-      await changePrice(itemAttr.itemId, itemAttr.itemCurrentPrice);
-    }
-
-    if (itemAttr.itemStock) {
-      await changeQuantity(
-        itemAttr.itemId,
-        itemAttr.itemStock,
-        itemAttr.itemCurrentPrice,
-        { type: 'init' }
-      );
-    }
+    // if (itemAttr.itemCurrentPrice) {
+    //   await changePrice(itemAttr.itemId, itemAttr.itemCurrentPrice);
+    // }
+    await changeQuantity(itemAttr.itemId, {
+      changeId: uuid(),
+      itemId: itemAttr.itemId,
+      quantityChange: 0,
+      quantityAfterChange: 0,
+      quantityChangeTime: today,
+      itemPrice: itemAttr.itemCurrentPrice ? itemAttr.itemCurrentPrice : 0,
+      type: 'init',
+      editedBy: userId,
+    });
 
     return { status: 'ok', stock: itemAttr };
   } catch (e) {
@@ -67,6 +69,7 @@ export async function getItems(query, options = {}) {
 }
 
 export async function updateItem(query, data, options = {}) {
+  //console.log('update item called', query, data);
   if (data.itemId) {
     delete data.itemId;
   }
@@ -74,40 +77,28 @@ export async function updateItem(query, data, options = {}) {
     delete data.ownerId;
   }
 
-  console.log('query', query);
+  // console.log('query', query);
 
-  console.log(data);
+  // console.log(data);
   try {
-    if (data.itemCurrentPrice) {
-      console.log('query.itemId', query.itemId);
-      changePrice(query.itemId, data.itemCurrentPrice);
-    }
-
-    if (data.itemStock) {
-      const result = await getItem(query);
-      console.log('result', result);
-      changeQuantity(query.itemId, data.itemStock, result.itemCurrentPrice, {
-        type: 'update',
-      });
-    }
-
     let result = await DB('stock')
       .where(query)
       .update(data)
       .then(result => {
         return { status: 'ok', msg: 'update success' };
       });
+
     return result;
   } catch (e) {
-    return { status: 'failed', msg: 'failed to update user ' + e };
+    return { status: 'failed', msg: 'failed to update stock: ' + e };
   }
 }
 
-async function changePrice(itemId, price) {
+export async function changePrice(itemId, price) {
   const time = Date.now();
 
   const priceRecord = {
-    historyId: uuidv4(),
+    historyId: uuid(),
     itemId: itemId,
     itemPrice: price,
     itemPriceChangeTime: time,
@@ -119,20 +110,12 @@ async function changePrice(itemId, price) {
   }
 }
 
-async function changeQuantity(itemId, quantity, price, infoJson) {
-  const time = Date.now();
-
-  const quantityChange = {
-    changeId: uuidv4(),
-    itemId: itemId,
-    quantityChange: quantity,
-    quantityChangeTime: time,
-    itemPrice: price,
-    info: JSON.stringify(infoJson),
-  };
-  console.log('quantityChange', quantityChange);
+export async function changeQuantity(itemId, attr) {
+  //console.log('stockChangeHistory attr', attr);
+  attr.changeId = uuid();
   try {
-    await DB('stockchangehistory').insert(quantityChange);
+    await updateItem(itemId, { itemStock: attr.quantityAfterChange });
+    await DB('stockChangeHistory').insert(attr);
   } catch (e) {
     return {
       status: 'failed',

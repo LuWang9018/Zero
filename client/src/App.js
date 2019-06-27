@@ -6,7 +6,6 @@ import Home from 'containers/Home';
 import { authStatus, setUser } from 'modules/users';
 import SignIn from 'containers/Account/SignIn';
 import SignUp from 'containers/Account/SignUp';
-import UserHome from 'containers/UserHome';
 import Stock from 'containers/Product/ProductList';
 import ProductDetail from 'containers/Product/ProdectDetail';
 import PropTypes from 'prop-types';
@@ -18,7 +17,7 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    const { store, router } = this.context;
+    const { store } = this.context;
     store.dispatch(authStatus()).then(user => {
       if (!user) {
         console.log('No User detected');
@@ -34,7 +33,6 @@ export default class App extends Component {
         <Switch>
           <Route exact path='/login' component={SignIn} />
           <Route exact path='/signup' component={SignUp} />
-          <Route exact path='/userHome' component={UserHome} />
           <Route exact path='/stock' component={Stock} />
           <Route exact path='/productDetail/*' component={ProductDetail} />
           <Route exact path='*' component={Home} />

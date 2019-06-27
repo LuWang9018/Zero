@@ -1,65 +1,50 @@
 import { Modal, FormLayout, TextField, Button } from '@shopify/polaris';
 import React from 'react';
-import { addStock, updateStock } from '../../../modules/stock';
+//import uuid from 'uuid';
+import { updateStockQuantity } from '../../../modules/stock';
 import { inputCheck } from '../../../utils/inputCheck';
 
 const productAttrs = [
   {
-    name: 'imageUrl',
-    type: 'image',
+    name: 'quantityChange',
+    displayName: 'Stock change amount',
+    type: 'number',
+    default: 0,
   },
+
   {
-    name: 'itemName',
-    displayName: 'Name',
-    type: 'string',
-    notNull: true,
-  },
-  {
-    name: 'itemCode',
-    displayName: 'Code',
-    type: 'string',
-  },
-  {
-    name: 'itemBarcode',
-    displayName: 'Barcode',
-    type: 'string',
-  },
-  {
-    name: 'itemCurrentPrice',
-    displayName: 'Price',
-    type: 'currency',
+    name: 'quantityAfterChange',
+    displayName: 'Or set stock number to',
+    type: 'number',
     min: 0,
   },
-
-  // {
-  //   name: 'details',
-  //   type: 'json',
-  // },
 ];
 
-export class AddProduct extends React.Component {
+export class ChangeStock extends React.Component {
   constructor(props, context) {
     super(props);
 
-    this.store = context.store;
-
     this.isDirty = false;
+
     this.state = {
       active: false,
+      quantityChange: 0,
     };
 
     if (props.productInfo) {
       this.state.productInfo = props.productInfo;
     }
+    if (props.userInfo) {
+      this.state.userInfo = props.userInfo;
+    }
   }
 
-  async componentDidUpdate(prevProps, context) {
+  async componentDidUpdate(prevProps) {
     //if no user info
     if (this.props !== prevProps) {
       //console.log('Product List update');
       const userInfo = this.props.userInfo;
       const productInfo = this.props.productInfo;
-      //console.log('productInfo update', productInfo);
       await this.setState({
         userInfo,
         productInfo,
@@ -88,6 +73,28 @@ export class AddProduct extends React.Component {
 
   async stateHook(attr, data) {
     await this.setState({ [attr]: data });
+
+    if (attr === 'quantityChange') {
+      let quantityAfterChange = Number(
+        Number(this.state.productInfo.itemStock) +
+          Number(this.state.quantityChange)
+      );
+      await this.setState({
+        quantityAfterChange,
+      });
+    }
+
+    if (attr === 'quantityAfterChange') {
+      let quantityChange = Number(
+        Number(this.state.quantityAfterChange) -
+          Number(this.state.productInfo.itemStock)
+      );
+
+      await this.setState({
+        quantityChange,
+      });
+    }
+
     this.isDirty = true;
   }
 
@@ -96,31 +103,29 @@ export class AddProduct extends React.Component {
       let attrName = productAttrs[i].name;
       this.setState({ [attrName]: undefined });
     }
-
     this.isDirty = false;
   }
 
   async handleOpen() {
     await this.toggleModal();
-    if (this.props.action === 'ADD') {
-      await this.setState({
-        title: 'Add New Product',
-        userInfo: this.props.userInfo,
-      });
-      for (let i in productAttrs) {
-        let attrName = productAttrs[i].name;
-        await this.setState({ [attrName]: undefined });
-      }
-    } else if (this.props.action === 'EDIT') {
-      await this.setState({ title: 'Edit Information' });
-      for (let i in productAttrs) {
-        let attrName = productAttrs[i].name;
+
+    await this.setState({ title: 'Change Stock' });
+    for (let i in productAttrs) {
+      let attrName = productAttrs[i].name;
+      if (productAttrs[i].default !== undefined) {
+        await this.setState({ [attrName]: productAttrs[i].default });
+      } else {
         await this.setState({ [attrName]: this.props.productInfo[attrName] });
       }
     }
 
+    await this.setState({
+      quantityAfterChange: this.state.productInfo
+        ? this.state.productInfo.itemStock
+        : 0,
+    });
     this.isDirty = false;
-    //console.log('add product state:', this.state);
+    //console.log('edit stock state:', this.state);
   }
 
   async handleClose() {
@@ -132,12 +137,17 @@ export class AddProduct extends React.Component {
     if (this.isDirty) {
       try {
         let body = await this.checkAndCompose();
-        //console.log('body', body);
-        if (this.props.action === 'ADD') {
-          await addStock(this.state.userInfo.userId, body);
-        } else if (this.props.action === 'EDIT') {
-          await updateStock(this.state.productInfo.itemId, body);
-        }
+
+        body.itemId = this.state.productInfo.itemId;
+        body.quantityChange = Number(this.state.quantityChange);
+        body.quantityChangeTime = Date.now();
+        body.quantityAfterChange = Number(this.state.quantityAfterChange);
+        body.type = 'edit';
+        body.itemPrice = Number(this.state.productInfo.itemCurrentPrice);
+        body.editedBy = this.state.userInfo.userId;
+
+        await updateStockQuantity(this.state.productInfo.itemId, body);
+        // updateStock(this.state.productInfo.itemId, body);
         await this.toggleModal();
       } catch (err) {
         console.log(err);
@@ -159,11 +169,13 @@ export class AddProduct extends React.Component {
 
       DOMs.push(
         <TextField
-          key={'AddProduct_' + attrDisplayName}
+          key={'changeQuantity_' + attrDisplayName}
           label={attrDisplayName}
           value={this.state[attrName]}
-          onChange={async data => this.stateHook(attrName, data)}
           type={attrType}
+          onChange={async data => {
+            await this.stateHook(attrName, data);
+          }}
         />
       );
     }
@@ -173,6 +185,18 @@ export class AddProduct extends React.Component {
   render() {
     const { active } = this.state;
 
+    const productInfo = this.state.productInfo;
+
+    //console.log('productInfo:', productInfo);
+    const changeStockCard = (
+      <FormLayout>
+        <div>
+          change from {productInfo ? productInfo.itemStock : 'Null'} to
+          {' ' + this.state.quantityAfterChange}
+        </div>
+        {this.genInputFields()}
+      </FormLayout>
+    );
     return (
       <div
         style={
@@ -182,7 +206,7 @@ export class AddProduct extends React.Component {
         }
       >
         <Button primary onClick={() => this.handleOpen()}>
-          {this.props.action === 'ADD' ? 'ADD PRODUCT' : 'Edit Information'}
+          {'Edit Stock'}
         </Button>
         <Modal
           open={active}
@@ -199,9 +223,7 @@ export class AddProduct extends React.Component {
             },
           ]}
         >
-          <Modal.Section>
-            <FormLayout>{this.genInputFields()}</FormLayout>
-          </Modal.Section>
+          <Modal.Section>{changeStockCard}</Modal.Section>
         </Modal>
       </div>
     );
