@@ -12,6 +12,7 @@
     "react-scripts": "2.1.8",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "victory": "^32.3.3",
     "victory-native": "^32.0.2"
   },
   "scripts": {

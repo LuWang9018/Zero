@@ -123,3 +123,19 @@ export async function changeQuantity(itemId, attr) {
     };
   }
 }
+
+export async function getStockChangeHistory(itemId) {
+  try {
+    let result = await DB('stockChangeHistory')
+      .select('stockChangeHistory.*', 'user.userName')
+      .where({ 'stockChangeHistory.itemId': itemId.itemId })
+      .join('user', 'user.userId', '=', 'stockChangeHistory.editedBy');
+
+    return result;
+  } catch (e) {
+    return {
+      status: 'failed',
+      msg: 'failed to create quantity change history ' + e,
+    };
+  }
+}

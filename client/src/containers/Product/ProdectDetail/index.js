@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
 import {
   Card,
   AppProvider,
@@ -22,8 +24,9 @@ import { imageNotFount } from '../../../utils/globals';
 import { AddProduct } from './addProduct';
 import { theme } from '../../../utils/globals';
 import { ChangeStock } from './changStock';
+import { getStockChangeHistory } from '../../../modules/stock';
 import { ChangePrice } from './changPrice';
-import * as victory from 'victory';
+import { ProductStockChangeGraph } from '../../SubContainers/productStockGraph';
 
 class ProductDetail extends React.Component {
   static contextTypes = {
@@ -83,6 +86,10 @@ class ProductDetail extends React.Component {
   async updateStock() {
     const result = await getMyStock({ itemId: this.state.Product.itemId });
     await this.setState({ Product: result[0] });
+    let stockChangeHistory = await getStockChangeHistory(
+      this.state.Product.itemId
+    );
+    await this.setState({ stockChangeHistory });
   }
 
   async componentDidMount() {}
@@ -132,13 +139,12 @@ class ProductDetail extends React.Component {
       />
     ) : null;
 
-    const stockData = [
-      {quarter: 1, earnings: 13000},
-      {quarter: 2, earnings: 16500},
-      {quarter: 3, earnings: 14250},
-      {quarter: 4, earnings: 19000}
-    ];
-    const stockGraph = ();
+    //console.log(this.state.stockChangeHistory);
+
+    const stockGraph = this.state.stockChangeHistory ? (
+      <ProductStockChangeGraph data={this.state.stockChangeHistory} />
+    ) : null;
+
     const actualPageMarkup = (
       <Page>
         <Card>
@@ -172,6 +178,7 @@ class ProductDetail extends React.Component {
         {addProduct}
         {changeStock}
         {changePrice}
+        <div style={{ width: '40%' }}>{stockGraph}</div>
       </Page>
     );
 

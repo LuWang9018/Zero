@@ -54,6 +54,12 @@ async function updateItemQuantity(ctx, next) {
   await next();
 }
 
+async function getStockChangeHistory(ctx, next) {
+  const { itemId } = ctx.params;
+  const stocks = await Stock.getStockChangeHistory({ itemId });
+  ctx.state.stock = stocks;
+  await next();
+}
 //price history
 
 //output
@@ -91,6 +97,12 @@ const api = router => {
     '/api/stock/:itemId/quantity',
     //requireAuth('update'),
     updateItemQuantity,
+    outputItem
+  );
+  router.get(
+    '/api/stock/:itemId/quantity',
+    //requireAuth('update'),
+    getStockChangeHistory,
     outputItem
   );
 };

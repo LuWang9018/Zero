@@ -60,6 +60,20 @@ export const updateStockQuantity = async (itemId, query) => {
   return result;
 };
 
+export const getStockChangeHistory = async (itemId, query) => {
+  //console.log('update stock Quantity query', query);
+  const result = await callApi(
+    `${conf.apiRoot}/api/stock/${itemId}/quantity`,
+    'GET',
+    {
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    }
+  );
+  //console.log('result', result);
+  return result;
+};
 // export const authenticate = (username, password) => {
 //   return async dispatch => {
 //     const result = await callApi(`${conf.apiRoot}/api/session`, 'POST', {
