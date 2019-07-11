@@ -56,7 +56,7 @@ export async function listItems(query, options = {}) {
       });
     return data;
   } catch (e) {
-    console.log('listUsers failed:', e);
+    console.log('listItem failed:', e);
   }
 }
 
