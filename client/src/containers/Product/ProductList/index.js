@@ -135,6 +135,7 @@ class Stock extends React.Component {
                     userId: this.state.userInfo
                       ? this.state.userInfo.userId
                       : undefined,
+                    action: 'itemList',
                   }
                 ) => genItemList(item, id, index, other)}
               />
