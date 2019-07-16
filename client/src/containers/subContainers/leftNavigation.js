@@ -21,6 +21,12 @@ export class LeftNavigation extends React.Component {
               url: '/Stock',
               onClick: this.props.toggleState('isLoading'),
             },
+            {
+              label: 'Shopping Cart',
+              icon: 'orders',
+              url: '/ShoppingCart',
+              onClick: this.props.toggleState('isLoading'),
+            },
           ]}
           action={{
             icon: 'conversation',

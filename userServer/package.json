@@ -11,6 +11,7 @@
   "author": "Lu",
   "license": "ISC",
   "dependencies": {
+    "jslint": "^0.12.1",
     "knex": "^0.16.5",
     "koa": "^2.7.0",
     "koa-body": "^4.1.0",

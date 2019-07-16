@@ -19,6 +19,8 @@ import price from './api/stock/price';
 
 //order
 import order from './api/order/order';
+import shoppingCart from './api/order/shoppingCart';
+
 //DB
 // import { connection } from "./db/db";
 // connection.connect(function(err) {
@@ -65,6 +67,7 @@ stock.api(router);
 price.api(router);
 //order
 order.api(router);
+shoppingCart.api(router);
 
 app.use(async (ctx, next) => {
   try {

@@ -7,6 +7,7 @@ import { authStatus, setUser } from 'modules/users';
 import SignIn from 'containers/Account/SignIn';
 import SignUp from 'containers/Account/SignUp';
 import Stock from 'containers/Product/ProductList';
+import shoppingCart from 'containers/Order/ShoppingCartList';
 import ProductDetail from 'containers/Product/ProdectDetail';
 import PropTypes from 'prop-types';
 
@@ -35,6 +36,7 @@ export default class App extends Component {
           <Route exact path='/signup' component={SignUp} />
           <Route exact path='/stock' component={Stock} />
           <Route exact path='/productDetail/*' component={ProductDetail} />
+          <Route exact path='/shoppingCart' component={shoppingCart} />
           <Route exact path='*' component={Home} />
         </Switch>
       </div>

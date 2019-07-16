@@ -20,12 +20,12 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../../modules/users';
-import { getMyStocks } from '../../../modules/stock';
+import { getMyShoppingCartItems } from '../../../modules/order';
+import { genItemList } from '../../SubContainers/genItemList';
 import { LeftNavigation } from '../../SubContainers/LeftNavigation';
 import { MyTopBar } from '../../SubContainers/TopBar';
-import { AddProduct } from '../ProdectDetail/addProduct';
+
 import { theme } from '../../../utils/globals';
-import { genItemList } from '../../SubContainers/genItemList';
 
 class Stock extends React.Component {
   static contextTypes = {
@@ -55,7 +55,7 @@ class Stock extends React.Component {
         userInfo: userInfo,
       });
       if (userInfo.userId) {
-        await this.updateStock();
+        await this.updateShoppingCart();
       }
     }
   }
@@ -67,9 +67,9 @@ class Stock extends React.Component {
     router.history.push('/login');
   };
 
-  async updateStock() {
-    console.log('user list:', this.state.userInfo);
-    const result = await getMyStocks(this.state.userInfo.userId);
+  async updateShoppingCart() {
+    //console.log('user list:', this.state.userInfo);
+    const result = await getMyShoppingCartItems(this.state.userInfo.userId);
     await this.setState({ myStocks: result });
   }
 
@@ -111,18 +111,9 @@ class Stock extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title='Stock'>
+      <Page title='Shopping Cart'>
         <Layout>
           <Layout.Section>
-            <AddProduct
-              action='ADD'
-              ownerId={
-                this.state.userInfo ? this.state.userInfo.userId : undefined
-              }
-              callBack={() => {
-                this.updateStock();
-              }}
-            />
             <Card sectioned>
               <ResourceList
                 resourceName={{ singular: 'My item', plural: 'My items' }}

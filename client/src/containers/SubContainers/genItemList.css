@@ -1,0 +1,14 @@
+#itemListInfo {
+  display: inline-block;
+}
+
+#itemListActions {
+  display: inline-block;
+  position: absolute;
+  right: 0;
+  z-index: 2;
+}
+
+.classCall {
+  z-index: 1;
+}

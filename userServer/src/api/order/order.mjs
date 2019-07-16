@@ -60,16 +60,16 @@ async function createOrderItem(ctx, next) {
   }
 }
 
-// async function getOrderItem(ctx, next) {
-//   const { orderItemId } = ctx.params;
-//   const order = await Order.getOrderItem({ orderItemId });
-//   ctx.state.order = order;
-//   await next();
-// }
+async function getOrderItem(ctx, next) {
+  const { orderItemId } = ctx.params;
+  const order = await Order.getOrderItem({ orderItemId });
+  ctx.state.order = order;
+  await next();
+}
 
 async function listOrderItems(ctx, next) {
   const query = ctx.request.query;
-  const order = await Order.listOrdersItems(query);
+  const order = await Order.listOrderItems(query);
   ctx.state.order = order;
   await next();
 }
@@ -134,19 +134,25 @@ const api = router => {
     outputOrder
   );
   router.get(
+    '/api/orders/:orderId/items/:orderItemId',
+    //requireAuth('read'),
+    getOrderItem,
+    outputOrder
+  );
+  router.get(
     '/api/orders/:orderId/items',
     //requireAuth('read'),
     listOrderItems,
     outputOrder
   );
   router.put(
-    '/api/orders/:orderItemId',
+    '/api/orders/:orderItemId/items/:orderItemId',
     //requireAuth('update'),
     updateOrderItem,
     outputOrder
   );
   router.del(
-    '/api/orders/:orderItemId',
+    '/api/orders/:orderItemId/items/:orderItemId',
     //requireAuth('delete'),
     deleteOrderItem,
     outputOrder

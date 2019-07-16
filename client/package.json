@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@shopify/polaris": "^3.12.0",
+    "jslint": "^0.12.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^5.0.7",

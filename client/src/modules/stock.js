@@ -74,6 +74,7 @@ export const getStockChangeHistory = async (itemId, query) => {
   //console.log('result', result);
   return result;
 };
+
 // export const authenticate = (username, password) => {
 //   return async dispatch => {
 //     const result = await callApi(`${conf.apiRoot}/api/session`, 'POST', {
