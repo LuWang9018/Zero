@@ -22,8 +22,8 @@ import { connect } from 'react-redux';
 import { getUser, logout } from '../../../modules/users';
 import { getMyShoppingCartItems } from '../../../modules/order';
 import { genItemList } from '../../SubContainers/genItemList';
-import { LeftNavigation } from '../../SubContainers/LeftNavigation';
-import { MyTopBar } from '../../SubContainers/TopBar';
+import { LeftNavigation } from '../../SubContainers/leftNavigation';
+import { MyTopBar } from '../../SubContainers/topBar';
 
 import { theme } from '../../../utils/globals';
 
@@ -88,13 +88,13 @@ class Stock extends React.Component {
     const toastMarkup = showToast ? (
       <Toast
         onDismiss={this.toggleState('showToast')}
-        content='Changes saved'
+        content="Changes saved"
       />
     ) : null;
 
     const contextualSaveBarMarkup = isDirty ? (
       <ContextualSaveBar
-        message='Unsaved changes'
+        message="Unsaved changes"
         saveAction={{
           onAction: this.handleSave,
         }}
@@ -111,7 +111,7 @@ class Stock extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title='Shopping Cart'>
+      <Page title="Shopping Cart">
         <Layout>
           <Layout.Section>
             <Card sectioned>
@@ -141,7 +141,7 @@ class Stock extends React.Component {
           <Layout.Section>
             <Card sectioned>
               <TextContainer>
-                <SkeletonDisplayText size='small' />
+                <SkeletonDisplayText size="small" />
                 <SkeletonBodyText lines={9} />
               </TextContainer>
             </Card>
@@ -156,7 +156,7 @@ class Stock extends React.Component {
       <Modal
         open={modalActive}
         onClose={this.toggleState('modalActive')}
-        title='Contact support'
+        title="Contact support"
         primaryAction={{
           content: 'Send',
           onAction: this.toggleState('modalActive'),
@@ -165,12 +165,12 @@ class Stock extends React.Component {
         <Modal.Section>
           <FormLayout>
             <TextField
-              label='Subject'
+              label="Subject"
               value={this.state.supportSubject}
               onChange={this.handleSubjectChange}
             />
             <TextField
-              label='Message'
+              label="Message"
               value={this.state.supportMessage}
               onChange={this.handleMessageChange}
               multiline

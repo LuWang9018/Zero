@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { TopBar, Card, ActionList } from '@shopify/polaris';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
-import { UserMenu } from './UserMenu';
+import { UserMenu } from './userMenu';
 export class MyTopBar extends React.Component {
   static contextTypes = {
     router: PropTypes.object,
@@ -78,7 +78,7 @@ export class MyTopBar extends React.Component {
       <TopBar.SearchField
         onChange={this.handleSearchFieldChange}
         value={searchText}
-        placeholder='Search'
+        placeholder="Search"
       />
     );
 
@@ -125,4 +125,4 @@ export default connect(
     user: getUser(state),
   }),
   { logout }
-)(UserMenu);
+)(MyTopBar);

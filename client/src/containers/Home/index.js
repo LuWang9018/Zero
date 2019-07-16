@@ -17,8 +17,8 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../modules/users';
-import { LeftNavigation } from '../SubContainers/LeftNavigation';
-import { MyTopBar } from '../SubContainers/TopBar';
+import { LeftNavigation } from '../SubContainers/leftNavigation';
+import { MyTopBar } from '../SubContainers/topBar';
 
 import { theme } from '../../utils/globals';
 
@@ -72,22 +72,22 @@ class Home extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title='Home'>
+      <Page title="Home">
         <Layout>
           <Layout.AnnotatedSection
-            title='Account details'
-            description='Jaded Pixel will use this as your account information.'
+            title="Account details"
+            description="Jaded Pixel will use this as your account information."
           >
             <Card sectioned>
               <FormLayout>
                 <TextField
-                  label='Full name'
+                  label="Full name"
                   value={nameFieldValue}
                   onChange={this.handleNameFieldChange}
                 />
                 <TextField
-                  type='email'
-                  label='Email'
+                  type="email"
+                  label="Email"
                   value={emailFieldValue}
                   onChange={this.handleEmailFieldChange}
                 />
@@ -104,7 +104,7 @@ class Home extends React.Component {
           <Layout.Section>
             <Card sectioned>
               <TextContainer>
-                <SkeletonDisplayText size='small' />
+                <SkeletonDisplayText size="small" />
                 <SkeletonBodyText lines={9} />
               </TextContainer>
             </Card>
@@ -119,7 +119,7 @@ class Home extends React.Component {
       <Modal
         open={modalActive}
         onClose={this.toggleState('modalActive')}
-        title='Contact support'
+        title="Contact support"
         primaryAction={{
           content: 'Send',
           onAction: this.toggleState('modalActive'),
@@ -128,12 +128,12 @@ class Home extends React.Component {
         <Modal.Section>
           <FormLayout>
             <TextField
-              label='Subject'
+              label="Subject"
               value={this.state.supportSubject}
               onChange={this.handleSubjectChange}
             />
             <TextField
-              label='Message'
+              label="Message"
               value={this.state.supportMessage}
               onChange={this.handleMessageChange}
               multiline

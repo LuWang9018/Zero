@@ -21,8 +21,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../../modules/users';
 import { getMyStocks } from '../../../modules/stock';
-import { LeftNavigation } from '../../SubContainers/LeftNavigation';
-import { MyTopBar } from '../../SubContainers/TopBar';
+import { LeftNavigation } from '../../SubContainers/leftNavigation';
+import { MyTopBar } from '../../SubContainers/topBar';
 import { AddProduct } from '../ProdectDetail/addProduct';
 import { theme } from '../../../utils/globals';
 import { genItemList } from '../../SubContainers/genItemList';
@@ -88,13 +88,13 @@ class Stock extends React.Component {
     const toastMarkup = showToast ? (
       <Toast
         onDismiss={this.toggleState('showToast')}
-        content='Changes saved'
+        content="Changes saved"
       />
     ) : null;
 
     const contextualSaveBarMarkup = isDirty ? (
       <ContextualSaveBar
-        message='Unsaved changes'
+        message="Unsaved changes"
         saveAction={{
           onAction: this.handleSave,
         }}
@@ -111,11 +111,11 @@ class Stock extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title='Stock'>
+      <Page title="Stock">
         <Layout>
           <Layout.Section>
             <AddProduct
-              action='ADD'
+              action="ADD"
               ownerId={
                 this.state.userInfo ? this.state.userInfo.userId : undefined
               }
@@ -150,7 +150,7 @@ class Stock extends React.Component {
           <Layout.Section>
             <Card sectioned>
               <TextContainer>
-                <SkeletonDisplayText size='small' />
+                <SkeletonDisplayText size="small" />
                 <SkeletonBodyText lines={9} />
               </TextContainer>
             </Card>
@@ -165,7 +165,7 @@ class Stock extends React.Component {
       <Modal
         open={modalActive}
         onClose={this.toggleState('modalActive')}
-        title='Contact support'
+        title="Contact support"
         primaryAction={{
           content: 'Send',
           onAction: this.toggleState('modalActive'),
@@ -174,12 +174,12 @@ class Stock extends React.Component {
         <Modal.Section>
           <FormLayout>
             <TextField
-              label='Subject'
+              label="Subject"
               value={this.state.supportSubject}
               onChange={this.handleSubjectChange}
             />
             <TextField
-              label='Message'
+              label="Message"
               value={this.state.supportMessage}
               onChange={this.handleMessageChange}
               multiline

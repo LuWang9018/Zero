@@ -4,10 +4,10 @@ import { Navigation } from '@shopify/polaris';
 export class LeftNavigation extends React.Component {
   render() {
     return (
-      <Navigation location='/'>
+      <Navigation location="/">
         <Navigation.Section
           separator
-          title='Jaded Pixel App'
+          title="Jaded Pixel App"
           items={[
             {
               label: 'Dashboard',

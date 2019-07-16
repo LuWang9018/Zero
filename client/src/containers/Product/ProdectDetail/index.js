@@ -17,8 +17,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUser, logout } from '../../../modules/users';
 import { getMyStock } from '../../../modules/stock';
-import { LeftNavigation } from '../../SubContainers/LeftNavigation';
-import { MyTopBar } from '../../SubContainers/TopBar';
+import { LeftNavigation } from '../../SubContainers/leftNavigation';
+import { MyTopBar } from '../../SubContainers/topBar';
 import { imageNotFount } from '../../../utils/globals';
 import { AddProduct } from './addProduct';
 import { theme } from '../../../utils/globals';
@@ -107,7 +107,7 @@ class ProductDetail extends React.Component {
 
     const addProduct = this.state.userInfo ? (
       <AddProduct
-        action='EDIT'
+        action="EDIT"
         userInfo={this.state.userInfo}
         productInfo={productInfo}
         callBack={() => {
@@ -118,7 +118,7 @@ class ProductDetail extends React.Component {
 
     const changeStock = this.state.userInfo ? (
       <ChangeStock
-        action='EDIT'
+        action="EDIT"
         userInfo={this.state.userInfo}
         productInfo={productInfo}
         callBack={() => {
@@ -129,7 +129,7 @@ class ProductDetail extends React.Component {
 
     const changePrice = this.state.userInfo ? (
       <ChangePrice
-        action='EDIT'
+        action="EDIT"
         userInfo={this.state.userInfo}
         productInfo={productInfo}
         callBack={() => {
@@ -156,15 +156,15 @@ class ProductDetail extends React.Component {
                     : this.state.Product.imageUrl
                 }
                 style={{ maxWidth: '100%' }}
-                alt='Cannot Load'
+                alt="Cannot Load"
               />
             </Layout.Section>
             <Layout.Section>
               <Card title={productInfo.itemName} sectioned>
-                <Card.Section title='price'>
+                <Card.Section title="price">
                   <p>{productInfo.itemCurrentPrice} $</p>
                 </Card.Section>
-                <Card.Section title='Information'>
+                <Card.Section title="Information">
                   <List>
                     <List.Item>Code: {productInfo.itemCode}</List.Item>
                     <List.Item>Stock: {productInfo.itemStock}</List.Item>
@@ -187,7 +187,7 @@ class ProductDetail extends React.Component {
           <Layout.Section>
             <Card sectioned>
               <TextContainer>
-                <SkeletonDisplayText size='small' />
+                <SkeletonDisplayText size="small" />
                 <SkeletonBodyText lines={9} />
               </TextContainer>
             </Card>
