@@ -1,5 +1,5 @@
 //import { requireAuth, logout, authenticateorder } from '../auth';
-import * as ShoppingCart from '../../models/order/ShoppingCart';
+import * as ShoppingCart from '../../models/Order/ShoppingCart';
 import { stringify } from 'querystring';
 
 //ShoppingCart
