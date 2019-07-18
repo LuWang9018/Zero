@@ -65,6 +65,7 @@ export async function updateShoppingCartItem(query, data, options = {}) {
 }
 
 export async function deleteShoppingCartItem(query, options = {}) {
+  console.log('=========', query);
   try {
     let result = await DB('shoppingCart')
       .where(query)

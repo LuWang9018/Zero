@@ -6,23 +6,15 @@ import {
   Button,
   ButtonGroup,
 } from '@shopify/polaris';
-import { addShoppingCartItem } from '../../modules/order';
+import {
+  addShoppingCartItem,
+  removeShoppingCartItem,
+} from '../../modules/order';
 import './genItemList.css';
 
-class buttons {
-  // constructor(props) {
-  //   this.userId = props.userId;
-  //   this.item = props.item;
-  // }
-
-  BTN_addToShappingCart(userId, item) {
-    // addShoppingCartItemHelper(e, userId, item) {
-    //   //console.log(e);
-    //   await e.stopPropagation();
-    //   const { itemId } = item;
-    //   addShoppingCartItem(userId, { itemId });
-    // }
-
+class Buttons {
+  //stock buttons
+  addToShappingCart(userId, item) {
     return (
       <Button
         primary
@@ -36,10 +28,28 @@ class buttons {
       </Button>
     );
   }
+
+  //chopping cart buttons
+  removeShappingCartItem(itemId) {
+    return (
+      <Button
+        destructive
+        outline
+        primary
+        onClick={event => {
+          event.stopPropagation();
+          removeShoppingCartItem(itemId);
+        }}
+      >
+        Remove item
+      </Button>
+    );
+  }
 }
 
 export function genItemList(item, id, index, other = {}) {
   {
+    const buttons = new Buttons();
     const { itemId, itemName, itemCode, itemCurrentPrice, itemStock } = item;
     const { userId, action } = other;
     let imageUrl = item.imageUrl
@@ -52,11 +62,14 @@ export function genItemList(item, id, index, other = {}) {
     function actionGroups() {
       if (action === 'itemList') {
         return (
-          <ButtonGroup>
-            {buttons.BTN_addToShappingCart(userId, item)}
-          </ButtonGroup>
+          <ButtonGroup>{buttons.addToShappingCart(userId, item)}</ButtonGroup>
         );
       } else if (action === 'shoppingCart') {
+        return (
+          <ButtonGroup>
+            {buttons.removeShappingCartItem(userId, item)}
+          </ButtonGroup>
+        );
       } else {
         return <div />;
       }

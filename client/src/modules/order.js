@@ -31,6 +31,18 @@ export const getMyShoppingCartItems = async userId => {
   return result;
 };
 
+export const removeShoppingCartItem = async shoppingCartItemId => {
+  const result = await callApi(
+    `${conf.apiRoot}/api/shoppingCart/${shoppingCartItemId}`,
+    'DELETE',
+    {
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    }
+  );
+  return result;
+};
 // export const getMyStock = async query => {
 //   const result = await callApi(`${conf.apiRoot}/api/shoppingCart/`, 'GET', {
 //     headers: new Headers({

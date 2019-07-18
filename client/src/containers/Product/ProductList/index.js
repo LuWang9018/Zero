@@ -46,6 +46,12 @@ class Stock extends React.Component {
     };
   }
 
+  async componentDidMount() {
+    const { user } = this.props;
+    console.log('?>>>>>>>>>');
+    console.log(user);
+  }
+
   async componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
       //console.log('Product List update');
@@ -73,10 +79,8 @@ class Stock extends React.Component {
     await this.setState({ myStocks: result });
   }
 
-  async componentDidMount() {}
-
   render() {
-    //console.log('store', this.context.store.getState());
+    console.log('store', this.context.store.getState());
     const {
       showToast,
       isLoading,
