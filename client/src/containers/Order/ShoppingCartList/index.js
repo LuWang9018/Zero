@@ -16,6 +16,7 @@ import {
   Page,
   SkeletonPage,
   ResourceList,
+  Button,
 } from '@shopify/polaris';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -24,7 +25,7 @@ import { getMyShoppingCartItems } from '../../../modules/order';
 import { genItemList } from '../../SubContainers/genItemList';
 import { LeftNavigation } from '../../SubContainers/leftNavigation';
 import { MyTopBar } from '../../SubContainers/topBar';
-
+import { CreateOrder } from '../NewOrder';
 import { theme } from '../../../utils/globals';
 
 class Stock extends React.Component {
@@ -70,13 +71,74 @@ class Stock extends React.Component {
   async updateShoppingCart() {
     //console.log('user list:', this.state.userInfo);
     const result = await getMyShoppingCartItems(this.state.userInfo.userId);
-    await this.setState({ myStocks: result });
+    const itemBySupplier = await this.groupBySupplier(result);
+
+    await this.setState({ myStocks: result, itemBySupplier });
   }
 
   async componentDidMount() {}
 
+  async groupBySupplier(item) {
+    let itemsSupplierNames = [];
+    let itemsBySupplier = [];
+    for (let i = 0; i < item.length; i++) {
+      let tmpSupplierName = item[i].itemSupplier
+        ? item[i].itemSupplier
+        : 'Unknow Supplier';
+      let supplierNameIndex = itemsSupplierNames.indexOf(tmpSupplierName);
+      if (supplierNameIndex !== -1) {
+        itemsBySupplier[supplierNameIndex].items.push(item[i]);
+      } else {
+        itemsSupplierNames.push(tmpSupplierName);
+        itemsBySupplier[itemsSupplierNames.length - 1] = {};
+        itemsBySupplier[itemsSupplierNames.length - 1].name = tmpSupplierName;
+        itemsBySupplier[itemsSupplierNames.length - 1].items = [item[i]];
+      }
+    }
+    return itemsBySupplier;
+  }
+
+  genListBySupplier(itemsBySupplier) {
+    if (!itemsBySupplier) return [];
+    let listBySupplier = [];
+    for (let i = 0; i < itemsBySupplier.length; i++) {
+      const createOrder = <CreateOrder items={itemsBySupplier[i]} />;
+
+      listBySupplier.push(
+        <Card key={`ResourceList ${itemsBySupplier[i].name}`}>
+          <div>
+            <h2>{`Supplier: ${itemsBySupplier[i].name}`}</h2>
+            <Card>
+              <ResourceList
+                resourceName={{ singular: 'My item', plural: 'My items' }}
+                items={itemsBySupplier[i].items}
+                renderItem={(
+                  item,
+                  id,
+                  index,
+                  other = {
+                    userId: this.state.userInfo
+                      ? this.state.userInfo.userId
+                      : undefined,
+                    action: 'shoppingCart',
+                  }
+                ) => genItemList(item, id, index, other)}
+              />
+            </Card>
+            {createOrder}
+          </div>
+        </Card>
+      );
+    }
+
+    return listBySupplier;
+  }
+
   render() {
     //console.log('store', this.context.store.getState());
+
+    //console.log(this.state.itemBySupplier);
+    const itemBySupplier = this.state.itemBySupplier;
     const {
       showToast,
       isLoading,
@@ -88,13 +150,13 @@ class Stock extends React.Component {
     const toastMarkup = showToast ? (
       <Toast
         onDismiss={this.toggleState('showToast')}
-        content="Changes saved"
+        content='Changes saved'
       />
     ) : null;
 
     const contextualSaveBarMarkup = isDirty ? (
       <ContextualSaveBar
-        message="Unsaved changes"
+        message='Unsaved changes'
         saveAction={{
           onAction: this.handleSave,
         }}
@@ -111,26 +173,10 @@ class Stock extends React.Component {
     const loadingMarkup = isLoading ? <Loading /> : null;
 
     const actualPageMarkup = (
-      <Page title="Shopping Cart">
+      <Page title='Shopping Cart'>
         <Layout>
           <Layout.Section>
-            <Card sectioned>
-              <ResourceList
-                resourceName={{ singular: 'My item', plural: 'My items' }}
-                items={this.state.myStocks}
-                renderItem={(
-                  item,
-                  id,
-                  index,
-                  other = {
-                    userId: this.state.userInfo
-                      ? this.state.userInfo.userId
-                      : undefined,
-                    action: 'shoppingCart',
-                  }
-                ) => genItemList(item, id, index, other)}
-              />
-            </Card>
+            <Card sectioned>{this.genListBySupplier(itemBySupplier)}</Card>
           </Layout.Section>
         </Layout>
       </Page>
@@ -142,7 +188,7 @@ class Stock extends React.Component {
           <Layout.Section>
             <Card sectioned>
               <TextContainer>
-                <SkeletonDisplayText size="small" />
+                <SkeletonDisplayText size='small' />
                 <SkeletonBodyText lines={9} />
               </TextContainer>
             </Card>
@@ -157,7 +203,7 @@ class Stock extends React.Component {
       <Modal
         open={modalActive}
         onClose={this.toggleState('modalActive')}
-        title="Contact support"
+        title='Contact support'
         primaryAction={{
           content: 'Send',
           onAction: this.toggleState('modalActive'),
@@ -166,12 +212,12 @@ class Stock extends React.Component {
         <Modal.Section>
           <FormLayout>
             <TextField
-              label="Subject"
+              label='Subject'
               value={this.state.supportSubject}
               onChange={this.handleSubjectChange}
             />
             <TextField
-              label="Message"
+              label='Message'
               value={this.state.supportMessage}
               onChange={this.handleMessageChange}
               multiline

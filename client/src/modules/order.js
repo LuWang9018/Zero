@@ -43,6 +43,7 @@ export const removeShoppingCartItem = async shoppingCartItemId => {
   );
   return result;
 };
+
 // export const getMyStock = async query => {
 //   const result = await callApi(`${conf.apiRoot}/api/shoppingCart/`, 'GET', {
 //     headers: new Headers({

@@ -22,7 +22,11 @@ export async function listShoppingCartItems(query, options = {}) {
   //console.log('list item query:', query);
   try {
     const data = await DB('shoppingCart')
-      .select('stock.*')
+      .select(
+        'stock.*',
+        'shoppingCart.shoppingCartItemId',
+        'shoppingCart.itemQuantity'
+      )
       .where(query)
       .join('stock', 'stock.itemId', '=', 'shoppingCart.itemId')
       .then(rows => {
@@ -65,7 +69,7 @@ export async function updateShoppingCartItem(query, data, options = {}) {
 }
 
 export async function deleteShoppingCartItem(query, options = {}) {
-  console.log('=========', query);
+  //console.log('=========', query);
   try {
     let result = await DB('shoppingCart')
       .where(query)

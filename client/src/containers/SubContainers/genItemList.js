@@ -5,6 +5,7 @@ import {
   Thumbnail,
   Button,
   ButtonGroup,
+  TextField,
 } from '@shopify/polaris';
 import {
   addShoppingCartItem,
@@ -37,11 +38,28 @@ class Buttons {
         outline
         primary
         onClick={event => {
-          event.stopPropagation();
           removeShoppingCartItem(itemId);
         }}
       >
         Remove item
+      </Button>
+    );
+  }
+
+  //createOrder button
+  removeFromThisOrder(id, removeFunction) {
+    console.log('genItemList.js, removeFromThisOrder:', id);
+    return (
+      <Button
+        destructive
+        outline
+        primary
+        onClick={event => {
+          const idx = id;
+          removeFunction(idx);
+        }}
+      >
+        Remove item from this order
       </Button>
     );
   }
@@ -52,12 +70,18 @@ export function genItemList(item, id, index, other = {}) {
     const buttons = new Buttons();
     const { itemId, itemName, itemCode, itemCurrentPrice, itemStock } = item;
     const { userId, action } = other;
+
     let imageUrl = item.imageUrl
       ? item.imageUrl
       : 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/600px-No_image_available_600_x_450.svg.png';
     const media = (
-      <Thumbnail source={imageUrl} alt="Cannot load image" size="large" />
+      <Thumbnail source={imageUrl} alt='Cannot load image' size='large' />
     );
+
+    // function handleChange(event) {
+    //   console.log(id);
+    //   item.itemQuantity = event;
+    // }
 
     function actionGroups() {
       if (action === 'itemList') {
@@ -66,9 +90,39 @@ export function genItemList(item, id, index, other = {}) {
         );
       } else if (action === 'shoppingCart') {
         return (
-          <ButtonGroup>
-            {buttons.removeShappingCartItem(userId, item)}
-          </ButtonGroup>
+          <div
+            onClick={event => {
+              event.stopPropagation();
+            }}
+          >
+            <ButtonGroup>
+              {/* <TextField
+                label='Quantity'
+                type='number'
+                value={item.itemQuantity}
+                onChange={handleChange}
+              /> */}
+              {buttons.removeShappingCartItem(item.shoppingCartItemId)}
+            </ButtonGroup>
+          </div>
+        );
+      } else if (action === 'pendingOrder') {
+        return (
+          <div
+            onClick={event => {
+              event.stopPropagation();
+            }}
+          >
+            <ButtonGroup>
+              {/* <TextField
+                label='Quantity'
+                type='number'
+                value={item.itemQuantity}
+                onChange={handleChange}
+              /> */}
+              {buttons.removeFromThisOrder(id, other.removeItemFromThisOrder)}
+            </ButtonGroup>
+          </div>
         );
       } else {
         return <div />;
@@ -84,15 +138,15 @@ export function genItemList(item, id, index, other = {}) {
         style={{ 'z-index': 0 }}
       >
         <div>
-          <div id="itemListInfo">
+          <div id='itemListInfo'>
             <h3>
-              <TextStyle variation="strong">{itemName}</TextStyle>
+              <TextStyle variation='strong'>{itemName}</TextStyle>
             </h3>
             <div>{itemCode}</div>
             <div>{itemCurrentPrice}</div>
             <div>{itemStock}</div>
           </div>
-          <div id="itemListActions">{actionGroups()}</div>
+          <div id='itemListActions'>{actionGroups()}</div>
         </div>
       </ResourceList.Item>
     );
