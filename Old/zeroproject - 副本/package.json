@@ -5,7 +5,7 @@
   "dependencies": {
     "gamesparks-sdk": "^1.0.0",
     "immutability-helper": "^2.7.1",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.1",
